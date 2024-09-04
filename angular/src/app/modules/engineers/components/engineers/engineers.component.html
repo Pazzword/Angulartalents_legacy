@@ -1,0 +1,449 @@
+<ngx-loading-bar color="#b21616" [includeSpinner]="false" height="3px"></ngx-loading-bar>
+<div class="spinner d-flex justify-content-center vh-100 align-items-center" *ngIf="loading">
+  <div class="spinner-border" role="status">
+    <span class="sr-only"></span>
+  </div>
+</div>
+<div class="container my-5 pb-5" *ngIf="!loading">
+  <header>
+    <h1 class="display-5 fw-bold main-color">Hire <span style="color:#b21616">Angular</span> developers</h1>
+    <div class="d-flex justify-content-between align-items-center head">
+      <article>
+        Talented Angular developers looking for their next gig. Juniors to seniors
+        and <br />
+        everyone in between, you'll find them all here.
+      </article>
+      <div class="d-flex addProfile" *ngIf="userIs === 'recruiter'">
+        <a class="pushme" [routerLink]="['/business/update', recruiterId]">
+          <span class="inner fw-bold"><i class="bi bi-pencil-fill"></i>&nbsp;Edit my profile</span></a>
+      </div>
+      <div class="d-flex addProfile" *ngIf="userIs === 'engineer'">
+        <a class="pushme" [routerLink]="['/engineers/update', engineerId]">
+          <span class="inner fw-bold"><i class="bi bi-pencil-fill"></i>&nbsp;Edit my profile</span></a>
+      </div>
+      <div class="d-flex addProfile" *ngIf="!userIs">
+        <a class="pushme" [routerLink]="['/role']">
+          <span class="inner fw-bold">+ Add my profile</span></a>
+      </div>
+      <!-- <div class="sort">Sort</div> -->
+    </div>
+  </header>
+  <div class="row">
+    <div class="filters-icon">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#filter"
+        aria-controls="filter">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill"
+          viewBox="0 0 16 16">
+          <path
+            d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="col-xs-12 col-lg-3 filters-desktop">
+      <nav class="position-relative">
+        <!-- Role level filter -->
+        <div [ngClass]="{ blur: !isMember && !showBlur }" class="accordion custom-box-shadow"
+          id="accordionPanelsStayOpenExample">
+          <!-- <label class="search-profiles main-color">Search profiles</label>
+          <div *ngIf="!isMember" class="private-info p-2 mb-2" [routerLink]="['/pricing']">
+            <i class="bi bi-lock-fill"></i>
+            <i class="bi bi-unlock-fill"></i>
+            <span class="priv">Text search requires a paid account.</span>
+          </div>
+          <input *ngIf="isMember" type="text" class="search-profiles-input shadow-sm rounded"
+            placeholder="Type a engineers name" /> -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+              <button class="accordion-button main-color" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                aria-controls="panelsStayOpen-collapseOne">
+                Role level
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+              aria-labelledby="panelsStayOpen-headingOne">
+              <div class="accordion-body">
+                <div class="form-check" *ngFor="let roleLevel of roleLevels; index as i">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="roleLevel.isSelected"
+                    (change)="handleChangeRoleLevel($event, i)" value="{{ roleLevel.value }}" id="roleLevelIdx{{ i }}"
+                    [ngModel]="selectedLevelIndex === i" />
+                  <label class="form-check-label" [attr.for]="'roleLevelIdx' + i">
+                    {{ roleLevel.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- role type filter -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+              <button class="accordion-button main-color" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseTwo">
+                Work preference
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show"
+              aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                <div class="form-check" *ngFor="let roleType of roleTypes; index as i">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="roleType.isSelected"
+                    (change)="handleChangeRoleType($event, i)" value="{{ roleType.value }}" id="roleTypeIdx{{ i }}"
+                    [ngModel]="selectedTypeIndex === i" />
+                  <label class="form-check-label" [attr.for]="'roleTypeIdx' + i">
+                    {{ roleType.name }}
+                  </label>
+                </div>
+
+                <div class="form-check border-top mt-2 pt-2">
+                  <input class="form-check-input" type="checkbox" value="" id="notInterestedDevs" />
+                  <label class="form-check-label" for="notInterestedDevs">
+                    Include developers <br />not currently interested
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- location filter -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+              <button class="accordion-button main-color collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseThree">
+                Location
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show"
+              aria-labelledby="panelsStayOpen-headingThree">
+              <div class="accordion-body pb-0">
+                <div class="form-check p-0">
+                  <div class="ng-autocomplete w-100">
+                    <ng-autocomplete [data]="countriesData" [searchKeyword]="keyword" placeholder="Select country"
+                      (selected)="selectCountry($event)" (inputCleared)="onCountryCleared($event)"
+                      [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate">
+                    </ng-autocomplete>
+
+                    <ng-template #itemTemplate let-item>
+                      <div class="d-flex align-items-center px-3">
+                        <img loading="lazy" fetchPriority="high" [src]="item.flag" width="30px" height="20px" />
+                        <a [innerHTML]="item.name"></a>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #notFoundTemplate let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 borderbtm">
+            <button class="btn btn-outline-secondary fw-bold" (click)="clearFilter()">
+              Clear
+            </button>
+            <button class="btn btn-dark mx-2 fw-bold" (click)="applyFilter()">Apply</button>
+          </div>
+        </div>
+        <div class="filter-blur-block" *ngIf="!isMember && !showBlur">
+          <div class="blur-block-wrap mod">
+            <p>To access filter</p>
+            <button class="btn btn-success" [routerLink]="['/pricing']">
+              Get started
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <!-- End of filters -->
+
+    <!-- List of engineers -->
+    <div class="col-xs-12 col-lg-9">
+      <main>
+        <div class="engineer-wrapper">
+          <div *ngFor="
+              let engineer of engineers
+                | paginate
+                  : {
+                      itemsPerPage: limit,
+                      currentPage: page,
+                      totalItems: total
+                    };
+              let i = index
+            ">
+            <ng-container *ngIf="
+                engineer?.SearchStatus === 'not_interested' ||
+                  engineer?.SearchStatus === 'invisible';
+                else elseTemplate
+              ">
+            </ng-container>
+            <ng-template #elseTemplate>
+              <!-- last 3 engineers blury and blocked if user is not member -->
+              <ng-container *ngIf="
+                  i > engineers.length - 4 && !isMember;
+                  else elseTemplate2
+                ">
+                <div [ngClass]="{ blur: !showBlur }">
+                  <a class="engineer custom-box-shadow e-h item" [routerLink]="['/engineers/details', engineer.ID]">
+                    <div class="flex-shrink-1">
+                      <picture>
+                        <img loading="lazy" fetchPriority="high" [src]="
+                            engineer?.Avatar
+                              ? engineer?.Avatar
+                              : 'assets/empty-avatar.png'
+                          " class="rounded-circle profile-image" />
+                      </picture>
+                    </div>
+
+                    <div class="engineer-info">
+                      <div class="engineer-info-header">
+                        <h2 class="fs-5 fw-bold main-color">{{ engineer.Tagline }}</h2>
+                        <div class="engineer-info-status d-flex align-items-center">
+                          <span [ngSwitch]="engineer?.SearchStatus">
+                            <span *ngSwitchCase="'actively_looking'">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green"
+                                class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                <path
+                                  d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                              </svg>
+                              Actively looking
+                            </span>
+                            <span *ngSwitchCase="'open'">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
+                                class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                <path
+                                  d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                              </svg>
+                              Open to offers
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="recently-active rounded-3">
+                        <span>New profile</span>
+                      </div>
+
+                      <div class="engineer-info-text">
+                        {{ engineer.Bio }}
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </ng-container>
+              <ng-template #elseTemplate2>
+                <a class="engineer custom-box-shadow e-h item" [routerLink]="['/engineers/details', engineer.ID]">
+                  <div class="flex-shrink-1">
+                    <picture>
+                      <img loading="lazy" fetchPriority="high" [src]="
+                          engineer?.Avatar
+                            ? engineer?.Avatar
+                            : 'assets/empty-avatar.png'
+                        " class="rounded-circle profile-image" />
+                    </picture>
+                  </div>
+
+                  <div class="engineer-info">
+                    <div class="engineer-info-header">
+                      <h2 class="fs-5 fw-bold main-color">{{ engineer.Tagline }}</h2>
+                      <div class="engineer-info-status d-flex align-items-center">
+                        <span [ngSwitch]="engineer?.SearchStatus">
+                          <span *ngSwitchCase="'actively_looking'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green"
+                              class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                              <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                            </svg>
+                            Actively looking
+                          </span>
+                          <span *ngSwitchCase="'open'" class="open-to-offers">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
+                              class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                              <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                            </svg>
+                            Open to offers
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="recently-active rounded-3">
+                      <span>New profile</span>
+                    </div>
+
+                    <div class="engineer-info-text">
+                      {{ engineer.Bio }}
+                    </div>
+                  </div>
+                </a>
+              </ng-template>
+            </ng-template>
+          </div>
+          <div class="blur-block" *ngIf="!isMember && !showBlur">
+            <div class="blur-block-wrap">
+              <h1 class="main-color">Sign up now to see more profiles.</h1>
+              <p>Gain access to so many more Angular talents.</p>
+              <button class="btn btn-success" [routerLink]="['/pricing']">
+                Start hiring
+              </button>
+            </div>
+          </div>
+        </div>
+        <p class="text-center mt-5" *ngIf="showNotFound"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+            fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+          </svg> Does not match any results!</p>
+        <pagination-controls *ngIf="isMember && showPagination"
+          (pageChange)="pageChangeEvent($event)"></pagination-controls>
+        <!-- <ul class="pagination">
+          <li class="page-item"><a (click)="prevIndex()" class="page-link">Previous</a></li>
+          <li class="page-item" *ngFor="let i of pagesCount let n = index">
+            <a class="page-link" [ngClass]="status ? 'active' : ''"  (click)="getIndex(n)" >{{n+1}}</a>
+            </li>
+          <li class="page-item"><a class="page-link" (click)="nextIndex()">Next</a></li>
+        </ul> -->
+      </main>
+    </div>
+    <!-- end of engineers -->
+  </div>
+</div>
+
+<!-- Side filter in mobile mode -->
+<nav class="navbar bg-light">
+  <div class="container-fluid">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filter" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <!-- Filters -->
+        <div class="col-xs-12 col-lg-3">
+          <nav>
+            <!-- Role level filter -->
+            <div [ngClass]="{ blur: !isMember && !showBlur }" class="accordion custom-box-shadow"
+              id="accordionPanelsStayOpenExample">
+              <!-- <label class="search-profiles">Search profiles</label>
+              <div *ngIf="!isMember" class="private-info p-2 mb-2" [routerLink]="['/pricing']">
+                <i class="bi bi-lock-fill"></i>
+                <i class="bi bi-unlock-fill"></i>
+                <span class="priv">Text search requires a paid account.</span>
+              </div>
+              <input *ngIf="isMember" type="text" class="search-profiles-input shadow-sm rounded"
+                placeholder="Type a engineers name" /> -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                  <button class="accordion-button main-color" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne">
+                    Role level
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-headingOne">
+                  <div class="accordion-body">
+                    <div class="form-check" *ngFor="let roleLevel of roleLevels; index as i">
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="roleLevel.isSelected"
+                        (change)="handleChangeRoleLevel($event, i)" value="{{ roleLevel.value }}"
+                        id="roleLevelIdx{{ i }}" [ngModel]="selectedLevelIndex === i" />
+                      <label class="form-check-label" [attr.for]="'roleLevelIdxMobile' + i">
+                        {{ roleLevel.name }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                  <button class="accordion-button main-color" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseTwo">
+                    Work preference
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-headingTwo">
+                  <div class="accordion-body">
+                    <div class="form-check" *ngFor="let roleType of roleTypes; index as i">
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="roleType.isSelected"
+                        (change)="handleChangeRoleType($event, i)" value="{{ roleType.value }}" id="roleTypeIdx{{ i }}"
+                        [ngModel]="selectedTypeIndex === i" />
+                      <label class="form-check-label" [attr.for]="'roleTypeIdxMobile' + i">
+                        {{ roleType.name }}
+                      </label>
+                    </div>
+
+                    <div class="form-check border-top mt-2 pt-2 mb-0">
+                      <input class="form-check-input" type="checkbox" value="" id="notInterestedDevs" />
+                      <label class="form-check-label" for="notInterestedDevs">
+                        Include developers <br />not currently interested
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- location filter -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                  <button class="accordion-button main-color collapsed pt-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseThree">
+                    Location
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+                  aria-labelledby="panelsStayOpen-headingThree">
+                  <div class="accordion-body pb-0">
+                    <div class="form-check p-0">
+                      <div class="ng-autocomplete w-100">
+                        <ng-autocomplete [data]="countriesData" [searchKeyword]="keyword" placeholder="Select country"
+                          (selected)="selectCountry($event)" (inputCleared)="onCountryCleared($event)"
+                          [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate">
+                        </ng-autocomplete>
+
+                        <ng-template #itemTemplate let-item>
+                          <div class="d-flex align-items-center px-3">
+                            <img loading="lazy" fetchPriority="high" [src]="item.flag" width="30px" height="20px" />
+                            <a [innerHTML]="item.name"></a>
+                          </div>
+                        </ng-template>
+
+                        <ng-template #notFoundTemplate let-notFound>
+                          <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white p-4 borderbtm">
+                <button class="btn btn-outline-secondary fw-bold" (click)="clearFilter()">
+                  Clear
+                </button>
+                <button class="btn btn-dark mx-2 fw-bold" (click)="applyFilter()">
+                  Apply
+                </button>
+              </div>
+            </div>
+            <div class="filter-blur-block" *ngIf="!isMember && !showBlur">
+              <div class="blur-block-wrap mod">
+                <p>To access filter</p>
+                <button class="btn btn-success" [routerLink]="['/pricing']">
+                  Get started
+                </button>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <!-- End of filters -->
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- end of filter on side on mobile mode -->

@@ -1,0 +1,205 @@
+* {
+  font-weight: 500;
+}
+
+.header,
+.price-heading {
+  font-size: 48px;
+}
+
+h1,
+h2,
+h3,
+.price-heading,
+.price-heading {
+  font-family: inherit;
+}
+
+.header {
+  line-height: 1;
+}
+
+.mb150 {
+  margin-bottom: 150px;
+}
+
+.ptemp {
+  padding: 150px 0;
+}
+
+h3 {
+  margin: 0;
+}
+
+.lead {
+  color: rgb(75, 85, 99);
+}
+
+.price-block-text {
+  color: rgb(107, 114, 128);
+  font-size: 16px;
+  max-width: 80%;
+}
+
+.text-muted {
+  color: rgb(55, 65, 81);
+}
+
+.text-muted-darker {
+  color: rgb(107, 114, 128);
+}
+
+.platform {
+  padding: 120px 20px 60px 20px;
+  background-color: cornsilk;
+  text-align: center;
+
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 70px 10px;
+
+    .stats-item {
+      width: 30%;
+      padding: 30px;
+      background-color: #fff;
+
+      h2 {
+        font-size: 3rem;
+      }
+    }
+  }
+}
+
+.boxshadow {
+  border: 3px solid rgb(43, 63, 95);
+  box-shadow: rgb(43 63 95) 4px 4px 0px;
+  border-radius: 15px;
+}
+
+.reviews {
+  padding: 100px 0;
+  background-color: #eff3f9;
+}
+
+.reviews-item {
+  width: 390px;
+  border-radius: 15px;
+  padding: 20px;
+}
+
+
+.reviews-item_info-right p {
+  color: rgb(75, 85, 99);
+}
+
+.reviews-item_info-right span {
+  color: rgb(31, 41, 55);
+}
+
+.rating-star {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: goldenrod;
+}
+
+.accordion-item {
+  padding: 25px;
+
+  .accordion-header {
+    margin: 0;
+  }
+
+  .accordion-header button {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: rgb(43, 63, 95);
+    margin: 0px;
+    text-align: left;
+  }
+}
+
+.accordion-header button:focus {
+  border: none !important;
+  border-color: #fff !important;
+  box-shadow: none;
+}
+
+.accordion-button {
+  padding: 0px;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: white;
+  box-shadow: none;
+}
+
+.accordion-body {
+  padding: 0;
+  margin-top: 10px;
+
+  span {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: rgb(107, 114, 128);
+  }
+}
+
+.accordions {
+  background-color: #17a3b44a;
+}
+
+@media only screen and (max-width: 768px) {
+
+  /* For mobile phones: */
+  .stats-item {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+
+  .reviews .container {
+    flex-direction: column;
+    align-items: center;
+
+    .reviews-item {
+      width: 80%;
+    }
+  }
+
+  .price-block {
+    padding-right: 0.5rem !important;
+    padding-left: 0.5rem !important;
+  }
+}
+
+button {
+  color: #fff;
+}
+
+.contactForm {
+  width: 50%;
+  margin: 50px auto;
+}
+
+.mod {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pointer {
+  cursor: pointer;
+}

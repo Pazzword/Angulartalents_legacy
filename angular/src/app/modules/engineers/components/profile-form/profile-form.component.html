@@ -1,0 +1,366 @@
+<ngx-loading-bar color="#b21616" [includeSpinner]="false" height="3px"></ngx-loading-bar>
+<div class="container container-mod">
+  <div class="row justify-content-center h-100">
+    <form [formGroup]="profileForm" (ngSubmit)="submit()">
+      <div class="text-left my-4">
+        <h2 class="fw-bold main-color">Create your developer profile</h2>
+      </div>
+      <div class="card mb-5 half shadow personal-info">
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-xs-12 col-lg-4 tfz">
+              <h2 class="main-color heading-2">Profile</h2>
+              <p class="text-color-3">
+                This information will be displayed publicly so be careful what
+                you share.
+              </p>
+            </div>
+            <div class="col-xs-12 col-lg-8">
+              <div class="mb-3">
+                <label for="exampleInputfirstName" class="form-label text-color-sec">First name *</label>
+                <input type="name" formControlName="firstName" class="form-control" id="exampleInputfirstName"
+                  placeholder="enter your first name" required [ngClass]="{
+                    'is-invalid':
+                      submitted &&
+                      profileForm.controls['firstName'].errors
+                      ,
+                    'is-valid': profileForm.controls['firstName'].valid
+                  }" />
+
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['firstName'].errors">
+                    First name is required!
+                  </div>
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputLastName" class="form-label text-color-sec">Last name *</label>
+                <input type="name" formControlName="lastName" class="form-control" id="exampleInputLastName" required
+                  [ngClass]="{
+                    'is-invalid':
+                    submitted &&
+                      profileForm.controls['lastName'].errors,
+                    'is-valid': profileForm.controls['lastName'].valid
+                  }" placeholder="enter your last name" />
+
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['lastName'].errors">
+                    Last name is required!
+                  </div>
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputhero1" class="form-label text-color-sec">Tagline *</label>
+                <input type="text" formControlName="tagLine" class="form-control" id="exampleInputhero1" required
+                  [ngClass]="{
+                    'is-invalid':
+                    submitted &&
+                      profileForm.controls['tagLine'].errors,
+                    'is-valid': profileForm.controls['tagLine'].valid
+                  }" placeholder="enter your tagline" />
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['tagLine'].errors">
+                    Tag line is required!
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-lg-6 mb-3">
+                  <!-- city -->
+                  <label for="forCity" class="form-label text-color-sec">City *</label>
+                  <input type="name" formControlName="city" class="form-control" id="forCity" required
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        profileForm.controls['city'].errors,
+                      'is-valid': profileForm.controls['city'].valid
+                    }" placeholder="enter your city" />
+
+                    <div class="text-danger" *ngIf="submitted && profileForm.controls['city'].errors">
+                      City is required!
+                    </div>
+                </div>
+                <!-- country -->
+                <div class="col-xs-12 col-lg-6 mb-3">
+                  <label for="forCountry" class="form-label text-color-sec">Country *</label>
+                  <input type="name" formControlName="country" class="form-control" id="forCountry" required
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        profileForm.controls['country'].errors,
+                      'is-valid': profileForm.controls['country'].valid
+                    }" placeholder="enter your country" />
+
+                    <div class="text-danger" *ngIf="submitted && profileForm.controls['country'].errors">
+                      Country is required!
+                    </div>
+                </div>
+              </div>
+              <!-- <div class="mb-3"> -->
+                <!-- <label for="location" class="form-label text-color-sec">Location *</label>
+                <input #location type="text" id="location" required formControlName="location" class="form-control"
+                  (keydown.enter)="$event.preventDefault()" placeholder="enter your location" type="text" #search
+                  [ngClass]="{
+                    'is-invalid':
+                    submitted &&
+                      profileForm.controls['location'].errors,
+                    'is-valid': profileForm.controls['location'].valid
+                  }" />
+
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['location'].errors">
+                    Location is required!
+                  </div> -->
+                <!-- <div class="mb-3">
+                  <input type="city" formControlName="city" class="form-control" placeholder="enter your city"
+                    id="exampleInputcity1" />
+                    <small *ngIf="
+                    profileFormControl.get('city')?.invalid &&
+                    profileFormControl.get('city')?.touched
+                  " class="text-danger">City is Required</small>
+                </div>
+                <div class="mb-3 mx-3">
+                  <label for="exampleInputstate1" class="form-label text-color-sec">State</label>
+                  <input type="state" formControlName="state" class="form-control" placeholder="enter your state"
+                    id="exampleInputstate1" />
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputcountry1" class="form-label text-color-sec">Country</label>
+                  <input type="country" formControlName="country" class="form-control" placeholder="enter your country"
+                    id="exampleInputcountry1" />
+                    <small *ngIf="
+                    profileFormControl.get('country')?.invalid &&
+                    profileFormControl.get('country')?.touched
+                  " class="text-danger">Country is Required</small>
+                </div> -->
+              <!-- </div> -->
+              <div class="mb-3 d-flex flex-column">
+                <label for="exampleInputavatar1" class="form-label text-color-sec">Avatar *</label>
+                <div>
+                  <label for="file-upload" class="custom-file-upload">upload</label>
+                  <img [src]="imageSrc" *ngIf="imageSrc" width="80rem" height="80rem" class="rounded-circle mx-2" />
+                  <input type="file" (change)="onFileChange($event)" id="file-upload" name="img" accept="image/*" />
+                </div>
+                <div class="text-danger" *ngIf="submitted && profileForm.controls['avatar'].errors">
+                  Avatar is required!
+                </div>
+              </div>
+              <!-- <div class="mb-3 d-flex flex-column">
+                <label for="exampleInputcoverImg1" class="form-label text-color-sec">Cover image</label>
+                <div class="w-full aspect-w-4 aspect-h-1 position-relative">
+                  <label for="cover-cover-upload" class="custom-cover-upload">upload</label>
+                  <img [src]="coverImg ? coverImg : 'assets/cover-unsplash.jpg'" class="coverImg">
+                  <input type="file" (change)="onCoverFileChange($event)" id="cover-cover-upload" name="img"
+                    accept="image/*">
+                </div>
+              </div> -->
+
+              <div class="mb-3">
+                <label for="exampleInputbio1" class="form-label text-color-sec">Bio *</label>
+                <textarea formControlName="bio" class="form-control" placeholder="enter your bio" id="exampleInputbio1"
+                  required [ngClass]="{
+                    'is-invalid':
+                      submitted &&
+                      profileForm.controls['bio'].errors,
+                    'is-valid': profileForm.controls['bio'].valid
+                  }" rows="4" cols="50"></textarea>
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['bio'].errors">
+                    Bio is required!
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card my-5 half shadow">
+        <div class="card-body px-4">
+          <div class="work-preferences mb-5">
+            <div class="search-status">
+              <div class="row">
+                <div class="col-xs-12 col-lg-4">
+                  <h2 class="main-color heading-2">Work preferences</h2>
+                  <p class="text-color-3">What kind of work are you looking for next?</p>
+                </div>
+                <div class="col-xs-12 col-lg-8">
+                  <p class="fw-bold mt-2 mb-2 main-color">Search status *</p>
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['searchStatus'].errors">
+                    Search status is required!
+                  </div>
+                  <div>
+                    <input type="radio" required id="activelylooking" formControlName="searchStatus"
+                      value="actively_looking" />
+
+                    <label for="activelylooking">Actively looking</label><br />
+                    <p class="desc-text">
+                      Your profile can get featured on the homepage.
+                    </p>
+                  </div>
+
+                  <div>
+                    <input type="radio" required id="open" formControlName="searchStatus" value="open" />
+                    <label for="open">Open</label><br />
+                    <p class="desc-text">
+                      Companies can still find you, but you won't appear on the
+                      homepage.
+                    </p>
+                  </div>
+
+                  <div>
+                    <input type="radio" required id="notinterested" formControlName="searchStatus"
+                      value="not_interested" />
+
+                    <label for="notinterested">Not interested</label><br />
+                    <p class="desc-text">
+                      Your profile will not appear in search results.
+                    </p>
+                  </div>
+
+                  <div>
+                    <input type="radio" required id="invisible" formControlName="searchStatus" value="invisible" />
+                    <label for="invisible">Invisible</label><br />
+                    <p class="desc-text">
+                      Your profile is hidden and can only be seen by yourself.
+                    </p>
+                  </div>
+
+                  <!-- Role type -->
+                  <div class="role-type mb-3">
+                    <p class="fw-bold fw-bold mt-2 mb-0 main-color">Role type *</p>
+                    <div class="text-danger" *ngIf="submitted && profileForm.controls['roleType'].errors">
+                      Role type is required!
+                    </div>
+                    <p class="desc-text-heading">
+                      Select all roles that you would consider taking.
+                    </p>
+                    <div *ngFor="let roleType of roleTypes; index as i">
+                      <input type="checkbox" id="roleTypeIndex{{i}}" (change)="handleChangeRoleType($event)"
+                        value="{{ roleType.value }}" required />
+                      <label [attr.for]="'roleTypeIndex'+i">{{ roleType.name }}</label><br />
+                    </div>
+                  </div>
+
+                  <!-- Role level -->
+                  <div class="role-level">
+                    <p class="fw-bold fw-bold mt-2 mb-0 main-color">Role level *</p>
+                    <div class="text-danger" *ngIf="submitted && profileForm.controls['roleLevel'].errors">
+                      Role level is required!
+                    </div>
+                    <p class="desc-text-heading">
+                      Select all the experience levels you would consider
+                      taking.
+                    </p>
+                    <div *ngFor="let roleLevel of roleLevels; index as i">
+                      <input type="checkbox" id="roleLevelIdx{{i}}" (change)="handleChangeRoleLevel($event)"
+                        value="{{ roleLevel.value }}" />
+                      <label [attr.for]="'roleLevelIdx'+i">{{ roleLevel.name }}</label><br />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card my-5 half shadow">
+        <div class="card-body px-4">
+          <div class="online-presence mb-5">
+            <div class="row">
+              <div class="col-xs-12 col-lg-4 mt-3">
+                <h2 class="main-color heading-2">Online presence</h2>
+                <p class="text-color-3">Where can people learn more about you and your work?</p>
+              </div>
+              <div class="col-xs-12 col-lg-8">
+                <p class="mb-2 mt-4 fw-bold">Website</p>
+                <div class="d-flex">
+                  <span class="url-prefix">https://</span>
+                  <input type="text" formControlName="website" class="form-control url" />
+                </div>
+                <div *ngIf="profileForm.controls['website'].hasError('http')" class="text-danger">
+                  Url has to be without 'https://', instead use: use: www.example.com or example.com
+                </div>
+                <div *ngIf="profileForm.controls['website'].hasError('url')" class="text-danger">
+                  Url is invalid, instead use: www.example.com or example.com
+                </div>
+                <!-- github -->
+                <p class="mb-2 mt-3 fw-bold">Github *</p>
+                <div class="d-flex">
+                  <span class="url-prefix">github.com/ </span>
+                  <input type="text" formControlName="github" class="form-control url" required [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        profileForm.controls['github'].errors,
+                      'is-valid': profileForm.controls['github'].valid
+                    }" />
+                </div>
+                <div *ngIf="
+                    submitted &&
+                    profileForm.controls['github'].errors?.['required']
+                  " class="text-danger">
+                  Github is required!
+                </div>
+                <div *ngIf="profileForm.controls['github'].hasError('http')" class="text-danger">
+                  Url has to be without 'https://', only your profile name
+                </div>
+                <div *ngIf="profileForm.controls['github'].hasError('username')" class="text-danger">
+                  Profile name is invalid*
+                </div>
+
+                <!-- twitter -->
+                <p class="mb-2 mt-3 fw-bold">Twitter</p>
+                <div class="d-flex">
+                  <span class="url-prefix">twitter.com/ </span>
+                  <input type="text" formControlName="twitter" class="form-control url" />
+                </div>
+                <div *ngIf="profileForm.controls['twitter'].hasError('http')" class="text-danger">
+                  Url has to be without 'https://', only your profile name
+                </div>
+                <div *ngIf="profileForm.controls['twitter'].hasError('username')" class="text-danger">
+                  Profile name is invalid*
+                </div>
+                <!-- linkedIn -->
+                <p class="mb-2 mt-3 fw-bold">Linkedin *</p>
+                <div class="d-flex">
+                  <span class="url-prefix">linkedin.com/in/</span>
+                  <input type="text" formControlName="linkedIn" class="form-control url" required [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        profileForm.controls['linkedIn'].errors,
+                      'is-valid': profileForm.controls['linkedIn'].valid
+                    }" />
+                </div>
+                <div *ngIf="
+                    submitted &&
+                    profileForm.controls['linkedIn'].errors?.['required']" class="text-danger">
+                  Linkedin is required!
+                </div>
+                <div *ngIf="profileForm.controls['linkedIn'].hasError('http')" class="text-danger">
+                  Url has to be without 'https://', only your profile name
+                </div>
+                <div *ngIf="profileForm.controls['linkedIn'].hasError('username')" class="text-danger">
+                  Profile name is invalid *
+                </div>
+                <!-- stackoverflow -->
+                <p class="mb-2 mt-3 fw-bold">Stack Overflow</p>
+                <div class="d-flex">
+                  <span class="url-prefix">stackoverflow/users/</span>
+                  <input type="text" formControlName="stackoverflow" class="form-control url" />
+                </div>
+                <div *ngIf="profileForm.controls['stackoverflow'].hasError('http')" class="text-danger">
+                  Url has to be without 'https://', only your profile name
+                </div>
+                <div *ngIf="
+                    profileForm.controls['stackoverflow'].hasError('username')
+                  " class="text-danger">
+                  Profile name is invalid
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="errors.length > 0">
+        <div class="alert alert-danger">
+          <strong class="fw-bold">Please check again:</strong>
+          <ul class="mt-2">
+            <li *ngFor="let error of errors">{{error}}</li>
+          </ul>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-dark mb-5 float-end">Save</button>
+    </form>
+  </div>
+</div>

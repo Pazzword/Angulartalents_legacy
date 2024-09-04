@@ -1,0 +1,53 @@
+.nav-mod{
+  margin: 0 40px;
+    height: 60px;
+    border-bottom: 3px solid black;
+}
+
+.dropdown-item{
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+  .nav-mod{
+    border-bottom: none !important;
+    margin: 0px;
+    .navbar-brand{
+      padding-left: 15px;
+    }
+    button{
+      margin-right: 15px;
+    }
+  }
+
+  .nav-link{
+    padding: 15px 20px;
+  }
+
+  .navbar-collapse{
+    background-color: #f6f9fc;
+    font-size: 18px;
+    z-index: 999;
+    text-align: left;
+    margin-top: 5px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .myprofileName{
+    color:rgba(0, 0, 0, 0.65);
+  }
+
+  .myProfileNav{
+    display: block !important;
+    border-top: 1px solid #dbdbdb;
+    padding-top: 20px;
+  }
+
+  .myProfileDesktop{
+    display: none;
+  }
+}
+
+.myProfileNav{
+  display: none;
+}

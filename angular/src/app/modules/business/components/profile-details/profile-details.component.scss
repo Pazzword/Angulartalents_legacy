@@ -1,0 +1,42 @@
+.profile-details {
+  margin: 80px 100px;
+  position: relative;
+}
+
+.btns {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.info {
+  padding: 10px 20px;
+
+  p.card-title {
+    color: rgb(107, 114, 128);
+  }
+}
+
+.btn-outline-dark:hover{
+  color: #fff !important;
+}
+
+.card-text {
+  white-space: pre-wrap;
+}
+
+@media only screen and (max-width: 768px) {
+  .profile-details {
+    margin: 0px;
+    position: relative;
+  }
+
+  .btns {
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .profile-details{
+    margin-top: 30px;
+  }
+}

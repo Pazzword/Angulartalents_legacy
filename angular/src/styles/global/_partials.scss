@@ -1,0 +1,384 @@
+.recently-active {
+  background-color: rgb(220, 252, 231);
+  color: rgb(22, 101, 52);
+  padding: 5px;
+  width: 95px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.custom-box-shadow {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  border: 3px solid #111827cf;
+  transition: all 0.3s ease-in-out 0s;
+  box-shadow: #111827cf 4px 4px 0px;
+  margin: 15px 16.0987px 15px 0px;
+}
+
+$main: rgb(43, 63, 95);
+$back: #f6f9fc;
+;
+
+.pushme {
+  position: relative;
+  font-weight: 700;
+  background-color: #111827cf;
+  border-radius: 0.6em;
+  display: inline-block;
+  margin: 1em;
+
+  .inner {
+    display: inline-block;
+    color: #111827cf;
+    background-color: $back;
+    border-radius: 0.6em;
+    border: 0.3em solid #111827cf;
+    padding: 1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    user-select: none;
+    transform: translate3d(-0.4em, -0.6em, 0);
+    transition: transform 240ms cubic-bezier(0.175, 0.885, 0.320, 1.275);
+    transition-delay: 220ms;
+  }
+
+  &:active,
+  &.click {
+    .inner {
+      transform: translate3d(0, 0, 0);
+      transition: transform 120ms cubic-bezier(0.230, 1.000, 0.320, 1.000);
+    }
+  }
+}
+
+
+// cover image for engineer and recruiter profile page
+.cover {
+  height: 250px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+
+// ********** Engineers page and home page styles **********
+// avatar picture of engineer
+.profile-image {
+  margin-right: 20px;
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+}
+
+// engineers
+.engineer-info-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+  h2 {
+    color: #1C2227;
+    width: 80%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow-wrap: break-word;
+  }
+}
+
+.engineer {
+  display: flex;
+  text-decoration: none;
+  padding: 1.5rem;
+
+  &:hover {
+    border-radius: 10px;
+  }
+}
+
+.engineer-info {
+  width: 83%;
+}
+
+.engineer-info-status span {
+  color: rgb(21, 128, 61)
+}
+
+.engineer-info-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow-wrap: break-word;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: rgb(55, 65, 81);
+  padding-top: 15px;
+}
+
+.e-h {
+  height: 240px;
+}
+
+.blur-block {
+  position: absolute;
+  top: 1850px;
+  padding: 162px 190px;
+}
+
+.blur-block-wrap {
+  border-radius: 10px;
+  border: 3px solid rgb(43, 63, 95);
+  transition: all 0.3s ease-in-out 0s;
+  box-shadow: rgb(43, 63, 95) 4px 4px 0px;
+  text-align: center;
+  padding: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  background-color: #fff;
+
+  h1 {
+    color: #1c2227;
+    font-size: 32px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 16px;
+    color: rgb(43, 63, 95);
+  }
+}
+
+// **********************************************************
+
+// Avatar or Logo upload button
+.custom-file-upload {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  width: 5rem;
+  text-align: center;
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
+}
+
+// Cover image for engineer upload button and img
+.custom-cover-upload {
+  border: 1px solid #fff;
+  border-radius: 10px;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  width: 5rem;
+  text-align: center;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  color: #fff !important;
+
+  &:hover {
+    background-color: #f1f1f12a;
+  }
+}
+
+.business-logo {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+}
+
+// actively looking / open svg style in engineers or home page
+.engineer-info-status svg {
+  margin-right: 5px;
+}
+
+//dark buttons
+.btn-dark {
+  --bs-btn-bg: #4b5563;
+  --bs-btn-border-color: #4b5563;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: rgb(55, 65, 81) !important;
+
+}
+
+
+
+// checkboxes styles
+input[type=checkbox] {
+  position: relative;
+  border: 2px solid #4b5563;
+  border-radius: 0.25rem;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+  margin: 0 .6em 0 0;
+  outline: 0;
+  padding: 0 !important;
+  vertical-align: text-top;
+  height: 20px;
+  width: 20px;
+  -webkit-appearance: none;
+  opacity: .5;
+}
+
+input[type=checkbox]:hover {
+  opacity: 1;
+}
+
+input[type=checkbox]:checked {
+  background-color: #4b5563;
+  opacity: 1;
+}
+
+input[type=checkbox]:before {
+  content: '';
+  position: absolute;
+  right: 60%;
+  top: 50%;
+  width: 4px;
+  height: 10px;
+  border: solid #FFF;
+  border-width: 0 2px 2px 0;
+  margin: -1px -1px 0 -1px;
+  transform: rotate(45deg) translate(-50%, -50%);
+  z-index: 2;
+}
+
+.form-check-input:focus {
+  box-shadow: none;
+  border-color: #4b5563;
+}
+
+.form-check-input:active {
+  filter: none;
+}
+
+.form-check-input:checked {
+  border-color: #4b5563;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(0, 0, 0, .125);
+}
+
+
+// private information locked
+.priv {
+  margin-left: 3px;
+}
+
+.bi-unlock-fill {
+  display: none;
+}
+
+.private-info {
+  border-radius: 15px;
+  border: 1px dashed #dee2e6;
+  width: 30%;
+  text-align: center;
+  background-color: rgb(249, 250, 251);
+}
+
+.private-info:hover {
+  cursor: pointer;
+  border-color: #a7a8aa;
+
+  .bi-unlock-fill {
+    display: inline
+  }
+
+  .bi-lock-fill {
+    display: none;
+  }
+}
+
+// signin and signup eye
+
+.input-group-text {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 0.6rem 0.75rem;
+}
+
+
+// animation for for pingpong loader in engineers page
+.pong-loader {
+  // position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 40px;
+  width: 6px;
+  background-color: #fff;
+  animation: paddles 0.75s ease-out infinite;
+  transform: translate3d(0, 0, 0);
+
+  &:before {
+    content: "";
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 15px;
+    width: 10px;
+    height: 10px;
+    background-color: #000;
+    border-radius: 50%;
+    animation: ballbounce 0.6s ease-out infinite;
+  }
+}
+
+.btn-dark {
+  background-color: #111827cf;
+}
+
+
+@keyframes paddles {
+  0% {
+    box-shadow: -25px -10px 0px #000, 25px 10px 0px #000;
+  }
+
+  50% {
+    box-shadow: -25px 8px 0px #000, 25px -10px 0px #000;
+  }
+
+  100% {
+    box-shadow: -25px -10px 0px #000, 25px 10px 0px #000;
+  }
+}
+
+@keyframes ballbounce {
+  0% {
+    transform: translateX(-20px) scale(1, 1.2);
+  }
+
+  25% {
+    transform: scale(1.2, 1);
+  }
+
+  50% {
+    transform: translateX(15px) scale(1, 1.2);
+  }
+
+  75% {
+    transform: scale(1.2, 1);
+  }
+
+  100% {
+    transform: translateX(-20px);
+  }
+}

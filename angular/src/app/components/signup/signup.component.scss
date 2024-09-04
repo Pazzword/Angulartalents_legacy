@@ -1,0 +1,54 @@
+.margin-vertical {
+  margin-top: 5rem;
+  margin-bottom: 8rem;
+}
+.half{
+  width: 50%;
+}
+
+.footerlink {
+  color: #00000094;
+  text-decoration: none;
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+  float:right;
+}
+
+.py-5{
+  padding-top: 8rem !important;
+}
+
+.footerlink:hover {
+  color: #000;
+}
+
+label{
+  margin-top: 1rem;
+}
+
+.input-group-append {
+  cursor: pointer;
+}
+@media only screen and (max-width: 768px) {
+  .half{
+    width: 90%;
+  }
+  .card-body{
+    padding-right: 1rem!important;
+    padding-left: 1rem!important;
+    h2{
+      margin-bottom: 1rem !important;
+    }
+  }
+}
+
+@media (min-width: 767px) and (max-width: 1000px) {
+  .container{
+    max-width: 970px;
+  }
+  .half{
+    width: 70%;
+  }
+}

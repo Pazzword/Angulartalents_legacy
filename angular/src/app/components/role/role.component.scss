@@ -1,0 +1,33 @@
+button{
+  background-color: #fff;
+  padding: 1.5rem;
+}
+
+button:hover{
+  box-shadow: none;
+}
+
+.wrap{
+  margin-top: 3rem;
+  margin-bottom: 16rem;
+}
+
+h2{
+  font-size: 1.7rem;
+}
+
+h3{
+  color:rgb(55, 65, 81);
+  font-size: 1.25rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .role{
+    display: block !important;
+  }
+
+  button {
+    margin-bottom: 20px;
+    margin-right: 0;
+  }
+}

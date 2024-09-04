@@ -1,0 +1,23 @@
+a, p{
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: rgb(156, 163, 175);
+  text-decoration: none;
+}
+
+a{
+  margin: 0 30px;
+  color:rgb(107, 114, 128);
+}
+
+a:hover{
+  color: rgb(23, 34, 52);
+}
+
+@media only screen and (max-width: 768px) {
+  .footer {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,280 @@
+.container {
+  padding: 0;
+}
+
+.engineer-info-status span.open-to-offers {
+  color: rgb(17, 24, 39);
+}
+
+header {
+  padding: 40px 20px 20px 0px;
+}
+
+article {
+  font-size: 21px;
+  font-weight: 500;
+  color: rgb(43, 63, 95);
+  line-height: 28px;
+}
+
+.form-check {
+  margin-bottom: 0.6rem;
+}
+
+.form-check-label {
+  color: rgb(107, 114, 128);
+}
+
+.accordion .search-profiles {
+  color: rgb(55, 65, 81);
+  font-weight: bold;
+  padding: 16px 20px 10px;
+}
+
+.search-profiles-input {
+  margin-left: 20px;
+  border: 1px solid #a5aab1;
+  padding: 4px 10px;
+  color: rgb(75, 85, 99);
+}
+
+.accordion-button:focus {
+  border-color: none;
+  box-shadow: none;
+}
+
+.accordion-button {
+  background: none !important;
+  color: rgb(55 65 81);
+  font-weight: 700;
+  padding-bottom: 0;
+}
+
+.accordion-button.collapsed {
+  background: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+  box-shadow: none;
+}
+
+.accordion-button::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-plus' viewBox='0 0 16 16'%3E%3Cpath d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z'/%3E%3C/svg%3E");
+}
+
+.accordion-button:not(.collapsed)::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-dash' viewBox='0 0 16 16'%3E%3Cpath d='M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z'/%3E%3C/svg%3E");
+}
+
+.accordion-item {
+  border: none;
+}
+
+.accordion-header {
+  margin: 0;
+}
+
+.col-3 {
+  padding-right: 0;
+}
+
+.col-9 {
+  padding-left: 0;
+}
+
+.engineer-wrapper .custom-box-shadow:hover {
+  box-shadow: none;
+}
+
+main {
+  margin-left: 20px;
+}
+
+.borderbtm {
+  border-bottom-right-radius: 18px;
+  border-bottom-left-radius: 18px;
+}
+
+.accordion-item:first-of-type {
+  border-top-right-radius: 18px;
+  border-top-left-radius: 18px;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+
+  header {
+    margin: 30px;
+    padding: 0;
+
+    h1 {
+      font-size: 27.85px;
+    }
+  }
+
+  .head {
+    display: block !important;
+  }
+
+  .accordion {
+    margin: auto;
+  }
+
+  .item {
+    width: 90%;
+    margin: 10px;
+
+    img {
+      width: 100px;
+      height: 100px;
+    }
+
+    h2 {
+      line-height: 1.1;
+      font-size: 16px;
+      font-weight: 600;
+      width: 75%;
+    }
+
+    .engineer-info-status {
+      display: none !important;
+    }
+
+    .engineer {
+      padding: 1.5rem 0 0 0;
+      margin-bottom: 15px;
+    }
+  }
+
+  .item {
+    width: 95%;
+  }
+
+  .addProfile {
+    margin-top: 30px;
+  }
+
+  .blur-block {
+    top: 1700px !important;
+    padding: 0 !important;
+
+    .blur-block-wrap {
+      width: 80%;
+    }
+  }
+
+  .filters-desktop {
+    display: none;
+  }
+
+  .filters-icon {
+    display: flex !important;
+    justify-content: flex-end;
+    padding: 10px 50px;
+  }
+
+  .offcanvas {
+    max-width: 85%;
+  }
+
+  .custom-box-shadow {
+    border: none;
+    box-shadow: none;
+    margin: 0 0 10px 0;
+  }
+
+  .offcanvas-body {
+    padding: 0;
+  }
+
+  .engineer-info-text {
+    width: 75%;
+  }
+}
+
+.filters-icon {
+  display: none;
+}
+
+.engineer-wrapper {
+  position: relative;
+}
+
+.blur {
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.filter-blur-block {
+  position: absolute;
+  padding: 0;
+  top: 33%;
+  left: 20%;
+  font-weight: bold;
+}
+
+.mod {
+  // padding: 10px !important;
+  box-shadow: none;
+  border: 1px solid rgb(43 63 95 / 38%);
+}
+
+.loader {
+  height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.inner {
+  font-size: 0.8rem;
+  transform: translate3d(-0.4em, -0.6em, 0);
+}
+
+.pushme {
+  margin: 0;
+}
+
+.private-info {
+  width: 91%;
+  margin: auto;
+
+  .priv {
+    font-weight: bold;
+    font-size: 13px;
+    color: rgb(75, 85, 99);
+  }
+
+  i {
+    color: rgb(75, 85, 99);
+  }
+}
+
+::ng-deep ul>li.current {
+  background: #000 !important;
+}
+
+@media (min-width: 768px) and (max-width: 990px) {
+  .engineer-info-status {
+    width: 65%;
+  }
+}
+
+@media (min-width: 991px) and (max-width: 1211px) {
+  .engineer-info-status {
+    width: 35%;
+  }
+
+  .container {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 1211px) and (max-width: 1399px) {
+  .engineer-info-status {
+    width: 25%;
+  }
+}

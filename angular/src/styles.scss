@@ -1,0 +1,16 @@
+@import "./styles/global/partials";
+@import "./styles/global/global";
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  // height: 100%;
+  scroll-behavior:auto !important;
+}
+body {
+  margin: 0;
+  background-color: #f6f9fc;
+}
+* {
+  font-family: "Open Sans", sans-serif !important;
+}

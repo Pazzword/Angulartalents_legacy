@@ -1,0 +1,95 @@
+<ngx-loading-bar color="#b21616" [includeSpinner]="false" height="3px"></ngx-loading-bar>
+<div class="container margin-vertical">
+  <div class="row justify-content-center">
+    <div class="card half custom-box-shadow">
+      <div class="card-body px-5">
+        <div class="text-center">
+          <h2 class="fw-semibold mb-4 main-color">Create new account</h2>
+        </div>
+        <form [formGroup]="signupForm" (ngSubmit)="signup()">
+          <!-- email -->
+          <div>
+            <label for="exampleInputEmail1" class="form-label text-color-sec">E-mail</label>
+            <input type="email" formControlName="email" required class="form-control" id="exampleInputEmail1"
+              aria-describedby="emailHelp">
+            <p class="text-danger mt-1" *ngIf="signupForm.controls['email'].hasError('pattern')">E-mail must be valid
+            </p>
+            <p class="text-danger mt-1"
+              *ngIf="signupForm.controls['email'].hasError('required') && signupForm.controls['email'].touched">
+              E-mail is required
+            </p>
+          </div>
+
+          <!-- password -->
+          <label for="exampleInputPassword1" class="form-label text-color-sec">Password</label>
+          <div class="input-group">
+            <input [type]="fieldTextType ? 'text' : 'password'" formControlName="password" class="form-control"
+              id="exampleInputPassword1">
+            <div class="input-group-append">
+              <span class="input-group-text" (click)="toggleFieldTextType()">
+                <svg *ngIf="!fieldTextType" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                  <path
+                    d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
+                  <path
+                    d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
+                </svg>
+                <svg *ngIf="fieldTextType" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-eye-fill" viewBox="0 0 16 16">
+                  <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                  <path
+                    d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <p class="text-danger mt-1" *ngIf="signupForm.controls['password'].hasError('minlength')">
+            Your password must be at least 8 characters long.
+          </p>
+
+          <p class="text-danger mt-1"
+            *ngIf="signupForm.controls['password'].hasError('required') && signupForm.controls['password'].touched">
+            Password is required
+          </p>
+
+          <!-- password confirmation -->
+          <label for="exampleInputPassword2" class="form-label text-color-sec">Password confirmation</label>
+          <div class="input-group">
+            <input [type]="repeatFieldTextType ? 'text' : 'password'" formControlName="confirmPassword"
+              class="form-control" id="exampleInputPassword2">
+            <div class="input-group-append">
+              <span class="input-group-text" (click)="toggleRepeatFieldTextType()">
+                <svg *ngIf="!repeatFieldTextType" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                  <path
+                    d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
+                  <path
+                    d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
+                </svg>
+                <svg *ngIf="repeatFieldTextType" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                  <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                  <path
+                    d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <p class="text-danger mt-1" *ngIf="signupForm.controls['confirmPassword'].hasError('not_matching')">
+            The password doesn't match!
+          </p>
+
+          <p class="text-danger mt-1"
+            *ngIf="signupForm.controls['confirmPassword'].hasError('required') && signupForm.controls['confirmPassword'].touched">
+            Password is required
+          </p>
+
+          <button type="submit" [disabled]="signupForm.invalid" class="btn btn-dark w-100 my-4">Sign up</button>
+        </form>
+      </div>
+      <div class="card-footer bg-white text-right">
+        <small><a class="footerlink" routerLink="/signin">Already registered? Click here to signin</a></small>
+      </div>
+    </div>
+  </div>
+</div>

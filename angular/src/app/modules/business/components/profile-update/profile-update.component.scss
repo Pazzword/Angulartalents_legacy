@@ -1,0 +1,67 @@
+.container-mod {
+  max-width: 64rem
+}
+
+.heading-2{
+  font-size: 18px;
+}
+.desc-text {
+  color: rgb(107 114 128);
+  font-size: 14px;
+  margin-left: 20px;
+}
+
+.tfz, input{
+font-size: 14px;
+}
+
+.desc-text-heading {
+  color: rgb(107 114 128);
+  font-size: 14px;
+}
+input[type="checkbox"]
+{
+    vertical-align:middle;
+}
+
+.search-status, .role-type, .role-level,  label {
+  margin-left: 7px;
+}
+
+.role-type h3, .role-level h3{
+  margin-bottom: 0;
+  line-height: 1.25rem;
+}
+
+.personal-info label {
+  margin-left: 0;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+
+h2{
+  color: rgb(33,37,41);
+  font-weight: bold;
+}
+button{
+  color: #fff;
+}
+
+.url {
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+
+.url-prefix{
+  padding: 8px 12px;
+  border-bottom: 1px solid #dee2e6;
+  border-top: 1px solid #dee2e6;
+  border-left: 1px solid #dee2e6;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: #f9fafb;
+  color: rgb(107 114 128);
+}

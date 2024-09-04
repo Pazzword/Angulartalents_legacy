@@ -1,0 +1,135 @@
+<ngx-loading-bar color="#b21616" [includeSpinner]="false" height="3px"></ngx-loading-bar>
+<div class="container container-mod">
+  <div class="row justify-content-center h-100">
+    <form [formGroup]="profileForm" (ngSubmit)="submit()">
+      <div class="text-left my-4">
+        <h2 class="fw-bold main-color">Update your business profile</h2>
+      </div>
+      <div class="card mb-3 half shadow personal-info">
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-xs-12 col-lg-4">
+              <h2 class="main-color heading-2">Business details</h2>
+              <p class="text-color-3">Information about your business. Here's your chance to sell yourself to potential hires! </p>
+            </div>
+            <div class="col-xs-12 col-lg-8 tfz">
+              <!-- company name -->
+              <div class="mb-3">
+                <label for="company" class="form-label text-color-sec">Company name *</label>
+                <input type="text" formControlName="company" class="form-control" id="company"
+                  placeholder="your company name" required
+                  [ngClass]="{ 'is-invalid': submitted && profileForm.controls['company'].errors, 'is-valid': profileForm.controls['company'].valid }" />
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['company'].errors">Company name is required!</div>
+              </div>
+
+              <!-- website -->
+              <div class="mb-3">
+                <label for="website" class="form-label text-color-sec">Website *</label>
+                <div class="d-flex">
+                  <span class="url-prefix">https://</span>
+                  <input type="text" formControlName="website" class="form-control url" id="website" required
+                    [ngClass]="{ 'is-invalid': submitted && profileForm.controls['website'].errors, 'is-valid': profileForm.controls['website'].valid }"
+                    placeholder="enter your website" />
+                </div>
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['website'].errors">Website is required!</div>
+                <div *ngIf="profileForm.controls['website'].hasError('http')" class="text-danger">
+                  Url has to be without 'https://', instead use: use: www.example.com or example.com
+                </div>
+                <div *ngIf="profileForm.controls['website'].hasError('url')" class="text-danger">
+                  Url is invalid, instead use: www.example.com or example.com
+                </div>
+              </div>
+
+              <!-- linkedIn -->
+              <div class="mb-3">
+                <label for="linkedIn" class="form-label text-color-sec">LinkedIn *</label>
+                <div class="d-flex">
+                  <span class="url-prefix">linkedin.com/in/</span>
+                  <input type="text" formControlName="linkedIn" class="form-control url" id="linkedIn" required
+                    [ngClass]="{ 'is-invalid': submitted && profileForm.controls['linkedIn'].errors, 'is-valid': profileForm.controls['linkedIn'].valid }"
+                    placeholder="enter your linkedIn" />
+                </div>
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['linkedIn'].errors">LinkedIn is required!</div>
+              </div>
+
+
+              <!-- bio -->
+              <div class="mb-3">
+                <label for="bio" class="form-label text-color-sec">Bio *</label>
+                <textarea formControlName="bio" class="form-control" placeholder="enter your bio" id="bio" required
+                  [ngClass]="{ 'is-invalid': submitted && profileForm.controls['bio'].errors, 'is-valid': profileForm.controls['bio'].valid }"
+                  rows="4" cols="50"></textarea>
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['bio'].errors">Bio is required!</div>
+              </div>
+
+              <!-- Logo -->
+              <div class="mb-3">
+                <label for="logo" class="form-label text-color-sec">Your company logo</label>
+                <div>
+                  <label for="file-upload" class="custom-file-upload">upload</label>
+                  <img [src]="imageSrc" *ngIf="imageSrc" class="rounded-circle mx-2 business-logo">
+                  <input type="file" (change)="onFileChange($event)" id="file-upload" name="img" accept="image/*">
+                </div>
+                <div class="text-danger" *ngIf="submitted && profileForm.controls['logo'].errors">Logo is required!</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4 half shadow personal-info">
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-xs-12 col-lg-4">
+              <h2 class="main-color heading-2">Personal details</h2>
+              <p class="text-color-3">Information about you, the contact point for your business on AngularTalents.</p>
+            </div>
+            <div class="col-xs-12 col-lg-8">
+              <!-- Your first name -->
+              <div class="mb-3">
+                <label for="firstName" class="form-label text-color-sec">Your first name *</label>
+                <input type="text" formControlName="firstName" class="form-control" id="firstName"
+                  placeholder="your first name" required
+                  [ngClass]="{ 'is-invalid': submitted && profileForm.controls['firstName'].errors, 'is-valid': profileForm.controls['firstName'].valid }" />
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['firstName'].errors">Your first name is required!</div>
+              </div>
+
+              <!-- Your last name -->
+              <div class="mb-3">
+                <label for="lastName" class="form-label text-color-sec">Your last name *</label>
+                <input type="text" formControlName="lastName" class="form-control" id="lastName"
+                  placeholder="your last name" required
+                  [ngClass]="{ 'is-invalid': submitted && profileForm.controls['lastName'].errors, 'is-valid': profileForm.controls['lastName'].valid }" />
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['lastName'].errors">Your last name is required!</div>
+              </div>
+
+              <!-- Your job title or role -->
+              <div class="mb-3">
+                <label for="role" class="form-label text-color-sec">Your job title or role *</label>
+                <input type="text" formControlName="role" class="form-control" id="role" required
+                  [ngClass]="{ 'is-invalid': submitted && profileForm.controls['role'].errors, 'is-valid': profileForm.controls['role'].valid }"
+                  placeholder="enter your job title or role" />
+                  <div class="text-danger" *ngIf="submitted && profileForm.controls['role'].errors">Your job title or role is required!</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="errors.length > 0">
+        <div class="alert alert-danger">
+          <strong class="fw-bold">Please check again:</strong>
+          <ul class="mt-2">
+            <li *ngFor="let error of errors">{{error}}</li>
+          </ul>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-dark mb-5 float-end">
+        Save
+      </button>
+    </form>
+  </div>
+</div>
