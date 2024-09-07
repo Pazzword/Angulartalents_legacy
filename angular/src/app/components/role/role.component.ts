@@ -29,14 +29,11 @@ export class RoleComponent {
   }
 
   selectRole(role: string) {
+    console.log(`Selected role: ${role}`);
     this.auth.setRole(role);  // Set role using AuthService
     this.toastr.success(`Role ${role} selected`);
-
-    // Directly navigate to form based on role
-    if (role === 'recruiter') {
-      this.router.navigate(['/business/form']);
-    } else if (role === 'engineer') {
-      this.router.navigate(['/engineers/form']);
-    }
+  
+    // Redirect to the signup page after role selection
+    this.router.navigate(['/signup']);
   }
 }

@@ -21,23 +21,30 @@ export class RoleGuard implements CanActivate {
     return this.auth.getMyProfile().pipe(
       tap((profile: any) => {
         if (profile.type === route.data['role']) {
-          this.route.navigate(['/']); // Redirect to home if role does not match
-          return false;
+          // Allow access if the role matches the expected role.
+          console.log(`Access granted for role: ${profile.type}`);
+          return true;
         }
+
         if (profile.type === 'recruiter') {
-          this.route.navigate(['business/update', profile.user.ID]); // Redirect to business update
+          console.log('Redirecting recruiter to business update.');
+          this.route.navigate(['business/update', profile.user.ID]);
           return false;
         }
+
         if (profile.type === 'engineer') {
-          this.route.navigate(['engineers/update', profile.user.ID]); // Redirect to engineer update
+          console.log('Redirecting engineer to engineer update.');
+          this.route.navigate(['engineers/update', profile.user.ID]);
           return false;
-        } else {
-          return true; // Allow access if no specific role is required
         }
+
+        return false;
       }),
       catchError((err) => {
-        return of(true); // Allow access on error, can adjust based on specific needs
+        console.error('Error in RoleGuard:', err);
+        return of(true); // Allow access on error.
       })
     );
   }
 }
+

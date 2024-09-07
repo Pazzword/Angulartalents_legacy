@@ -10,11 +10,14 @@ export class AuthInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const idToken = localStorage.getItem("token");
-
+        const selectedRole = localStorage.getItem('selectedRole');  // Log the selectedRole
+        console.log('AuthInterceptor - idToken:', idToken);
+        console.log('AuthInterceptor - selectedRole:', selectedRole);
+        
         if (req.url === "https://api.cloudinary.com/v1_1/rmsmms/upload") {
             return next.handle(req);
         }
-
+      
         if (idToken) {
             const cloned = req.clone({
                 headers: req.headers.set("Authorization", `Bearer ${idToken}`)
@@ -23,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
         } else {
             return next.handle(req);
         }
-    }
+      }
 }
 
     // this is a second option

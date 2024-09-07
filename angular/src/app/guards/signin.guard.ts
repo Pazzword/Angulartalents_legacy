@@ -15,7 +15,7 @@ export class SigninGuard implements CanActivate {
       return this.auth.isLoggedIn$.pipe(
         tap((loggedIn: boolean) => {
           if (loggedIn) {
-            // Redirect to home if already logged in
+            console.log('User is logged in, redirecting to home.');
             this.router.navigate(['']);
           }
         })

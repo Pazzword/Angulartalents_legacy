@@ -25,18 +25,21 @@ export class UpdateProfileRoleGuard implements CanActivate {
   ): Observable<boolean> {
     return this.auth.getMyProfile().pipe(
       tap((profile: any) => {
-        if (profile.type === route.data['role']) {
-          this.toastr.error('Access denied'); // Show error message
-          this.route.navigate(['/']); // Redirect to home on access denial
-          return false;
+        console.log(`UpdateProfileRoleGuard - Role: ${profile.type}, Expected role: ${route.data['role']}`);
+        if (profile.type !== route.data['role']) {
+          console.log('Role does not match. Access granted.');
+          return true; // Allow access if roles don't match
         } else {
-          return true; // Allow access if roles match
+          console.log('Access denied. Roles match.');
+          this.toastr.error('Access denied'); // Show error message
+          this.route.navigate(['/']);
+          return false;
         }
       }),
       catchError((err) => {
-        console.log(err.error.code);
+        console.error('Error in UpdateProfileRoleGuard:', err);
         this.route.navigate(['/role']); // Redirect to role selection on error
-        return of(true);
+        return of(false);
       })
     );
   }

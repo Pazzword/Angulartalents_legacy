@@ -35,22 +35,11 @@ export class ProfileDetailsComponent {
               next: (myProfile) => {
                 this.loading = false;
                 if (myProfile.type === "recruiter") {
-                  this.recruiterIsMember = myProfile.user.IsMember
+                  this.recruiterIsMember = myProfile.user.IsMember;
                 }
                 if (myProfile.type === "engineer" && (myProfile.user.ID === params['id'])) {
-                  this.engineer = myProfile.user
+                  this.engineer = myProfile.user;
                   this.userIsMe = myProfile.user.ID === params['id'];
-                  this.commonService.afterCreateProfileMessage$.subscribe({
-                    next: res => {
-                      console.log(res)
-                      if (res) {
-                        this.toastr.success('Now you just sit back and wait until companies contact you!', 'All done!', { timeOut: 5000 })
-                      }
-                    },
-                    error: err => {
-                      console.log(err)
-                    }
-                  })
                 } else {
                   this.engineer = engineerFoundById.engineer;
                 }
@@ -58,19 +47,18 @@ export class ProfileDetailsComponent {
               error: (err) => {
                 this.loading = false;
                 this.engineer = engineerFoundById.engineer;
-                console.error(err)
+                console.error(err);
               }
             });
-
-
           },
           error: err => {
-            console.log('profile not found');
-            console.error(err)
+            console.log('Profile not found');
+            console.error(err);
             this.loading = false;
             this.profileNotFoundError = true;
           }
         });
     });
   }
+  
 }

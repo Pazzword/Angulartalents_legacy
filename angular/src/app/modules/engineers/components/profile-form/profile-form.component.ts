@@ -180,74 +180,85 @@ submit() {
   const role = this.authService.getRole(); // Get role directly from the AuthService
 
   if (role === 'engineer') {
-      this.submitImgToCloudinary();
+    console.log('User role is engineer, proceeding with profile creation.');
+    this.submitImgToCloudinary();
   } else {
-      this.loader.stop();
-      this.errors = ['You do not have permission to create an engineer profile.'];
-      console.error('User does not have engineer access');
+    this.loader.stop();
+    this.errors = ['You do not have permission to create an engineer profile.'];
+    console.error('User does not have engineer access:', role); // Log the role if access is denied
   }
 }
 
-  submitImgToCloudinary() {
-    this.submitted = true;
-    this.errors = [];
-    const formData = new FormData();
-    formData.append('file', this.imgFile);
-    formData.append('upload_preset', 'flask-upload');
+submitImgToCloudinary() {
+  this.submitted = true;
+  this.errors = [];
+  const formData = new FormData();
+  formData.append('file', this.imgFile);
+  formData.append('upload_preset', 'flask-upload');
 
-    this.cloudinary.uploadImg(formData).subscribe({
-      next: (res) => {
-        this.profileForm.patchValue({ avatar: res.secure_url });
-        const data = {
-          first_name: this.profileForm.value.firstName,
-          last_name: this.profileForm.value.lastName,
-          tagLine: this.profileForm.value.tagLine,
-          city: this.profileForm.value.city,
-          country: this.profileForm.value.country,
-          avatar: res.secure_url,
-          bio: this.profileForm.value.bio,
-          searchStatus: this.profileForm.value.searchStatus,
-          roleType: this.profileForm.value.roleType,
-          roleLevel: this.profileForm.value.roleLevel,
-          linkedIn: 'https://www.linkedin.com/in/' + this.profileForm.value.linkedIn,
-          website: 'https://' + this.profileForm.value.website,
-          github: 'https://github.com/' + this.profileForm.value.github,
-          twitter: 'https://twitter.com/' + this.profileForm.value.twitter,
-          stackoverflow: 'https://stackoverflow.com/users/' + this.profileForm.value.stackoverflow,
-          user: this.authService.getUserData()?.id,
-        };
+  this.cloudinary.uploadImg(formData).subscribe({
+    next: (res) => {
+      this.profileForm.patchValue({ avatar: res.secure_url });
+      const data = {
+        first_name: this.profileForm.value.firstName,
+        last_name: this.profileForm.value.lastName,
+        tagLine: this.profileForm.value.tagLine,
+        city: this.profileForm.value.city,
+        country: this.profileForm.value.country,
+        avatar: res.secure_url,
+        bio: this.profileForm.value.bio,
+        searchStatus: this.profileForm.value.searchStatus,
+        roleType: this.profileForm.value.roleType,
+        roleLevel: this.profileForm.value.roleLevel,
+        linkedIn: 'https://www.linkedin.com/in/' + this.profileForm.value.linkedIn,
+        website: 'https://' + this.profileForm.value.website,
+        github: 'https://github.com/' + this.profileForm.value.github,
+        twitter: 'https://twitter.com/' + this.profileForm.value.twitter,
+        stackoverflow: 'https://stackoverflow.com/users/' + this.profileForm.value.stackoverflow,
+        user: this.authService.getUserData()?.id,
+      };
 
-        if (this.profileForm.valid) {
-          this.engineerService.createEngineer(data).subscribe({
-            next: (response: any) => {
-              this.submitted = false;
-              this.commonService.updateUsersDataForHeader({
-                image: data.avatar,
-                firstName: data.first_name,
-                lastName: data.last_name,
-              });
-              this.router.navigate(['engineers/details', response.engineerId]); // Assuming response contains `engineerId`
-              this.commonService.afterCreateProfileMessage.next(true);
-              this.loader.stop();
-            },
-            error: (error) => {
-              console.error('Error creating engineer:', error);
-              this.errors = ['Error creating engineer. Please try again.'];
-              this.loader.stop();
-            },
-          });
-        } else {
-          this.errors = errorMessageGenerator(this.profileForm.controls);
-          this.loader.stop();
-        }
-      },
-      error: (err) => {
-        console.error('Error uploading image:', err);
-        this.errors = ['Image upload failed. Please try again.'];
+      if (this.profileForm.valid) {
+        this.engineerService.createEngineer(data).subscribe({
+          next: (response: any) => {
+            this.submitted = false;
+            this.commonService.updateUsersDataForHeader({
+              image: data.avatar,
+              firstName: data.first_name,
+              lastName: data.last_name,
+            });
+        
+            console.log('Redirecting to details page with engineer ID:', response.engineerId); // Add this line for debugging
+        
+            if (response.engineerId) {
+              this.router.navigate(['engineers/details', response.engineerId]); // Ensure `engineerId` is correct.
+            } else {
+              console.error('Engineer ID is missing in response:', response);
+            }
+        
+            this.commonService.afterCreateProfileMessage.next(true);
+            this.loader.stop();
+          },
+          error: (error) => {
+            console.error('Error creating engineer:', error);
+            this.errors = ['Error creating engineer. Please try again.'];
+            this.loader.stop();
+          },
+        });
+      } else {
+        this.errors = errorMessageGenerator(this.profileForm.controls);
         this.loader.stop();
-      },
-    });
-  }
+      }
+    },
+    error: (err) => {
+      console.error('Error uploading image:', err);
+      this.errors = ['Image upload failed. Please try again.'];
+      this.loader.stop();
+    },
+  });
+}
+
+
 
   onFileChange(event: any) {
     const file = event.target.files[0];

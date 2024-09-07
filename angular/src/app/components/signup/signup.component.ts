@@ -15,22 +15,19 @@ import { CommonService } from 'src/app/services/common-service/common.service';
 export class SignupComponent {
   fieldTextType: boolean;
   repeatFieldTextType: boolean;
-  loader = this.loadingBar.useRef();
+  loader = this.loadingBar.useRef(); // Loading bar reference
 
   signupForm = this.fb.group({
-    email: ['', Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$')],
+    email: ['', [Validators.required, Validators.email]],  // Email field validation
     password: [
       '',
-      Validators.compose([Validators.required, Validators.minLength(8)]),
+      Validators.compose([Validators.required, Validators.minLength(8)]),  // Password field validation
     ],
     confirmPassword: [
       '',
-      [
-        Validators.required,
-      ],
+      [Validators.required],
     ],
-  },
-    { validator: CustomValidators.MatchingPasswords });
+  }, { validator: CustomValidators.MatchingPasswords });
 
   constructor(
     private fb: FormBuilder,
@@ -39,58 +36,68 @@ export class SignupComponent {
     private toastr: ToastrService,
     private loadingBar: LoadingBarService,
     private commonService: CommonService
-  ) { }
+  ) {}
 
+  // Toggle password visibility
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
   }
 
+  // Toggle confirm password visibility
   toggleRepeatFieldTextType() {
     this.repeatFieldTextType = !this.repeatFieldTextType;
   }
 
   signup() {
-    this.loader.start();
+    console.log('Signup initiated');
+    this.loader.start(); // Start loading bar
+
+    // Check if form is valid
     if (this.signupForm.valid) {
-      const role = this.auth.getRole();  // Get role from AuthService
+      console.log('Signup form is valid');
+
+      const role = this.auth.getRole();  // Retrieve role from AuthService
+      console.log('Role retrieved during signup:', role);
+
+      // Check if role is selected
       if (!role) {
         this.toastr.error('Role is not selected. Please go back and select a role.');
-        this.loader.stop();
+        this.loader.stop(); // Stop loading bar
         return;
       }
 
       const signupData = {
         email: this.signupForm.value.email,
         password: this.signupForm.value.password,
-        role: role  // Include role in signup data
+        role: role  // Include role in the signup data
       };
 
+      console.log('Signup data being sent:', signupData);
+
+      // Call signup service method
       this.auth.signup(signupData).subscribe({
         next: (response) => {
-          // Update: Do not automatically log the user in after signup
-          // Remove the auto-login lines
-          // localStorage.setItem('token', response.access);
-          // localStorage.setItem('refreshToken', response.refresh);
-          // this.auth.setIsLoggedIn(true);
-
-          // Notify user to check their email for verification
+          console.log('Signup response:', response);  // Log success response
           this.toastr.success('Registration successful! Please check your email to verify your account.');
-          this.signupForm.reset();
-          this.router.navigate(['/email-verify']); // Optionally, navigate to a page explaining verification
-          this.loader.stop();
+          this.signupForm.reset();  // Reset the form
+          this.router.navigate(['/email-verify']);  // Navigate to email verification page
+          this.loader.stop(); // Stop loading bar
         },
         error: (error) => {
-          this.loader.stop();
+          console.error('Signup error:', error);  // Log error response
+          this.loader.stop(); // Stop loading bar
+
+          // Show error message based on response
           if (error.error.detail === 'user already created') {
             this.toastr.error('Account already exists');
           } else {
             this.toastr.error('Registration failed. Please try again.');
           }
-          console.error(error);
-        },
+        }
       });
     } else {
-      this.loader.stop();
+      console.log('Signup form is invalid');
+      this.loader.stop(); // Stop loading bar
       this.toastr.error('Please fill in the form correctly.');
     }
   }

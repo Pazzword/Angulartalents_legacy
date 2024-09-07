@@ -41,12 +41,19 @@ class EngineerListCreateView(APIView):
             'engineers': serializer.data,
             'total': total_engineers
         }, status=status.HTTP_200_OK)
-    
+
     @method_decorator(engineer_required)
     def post(self, request):
-        serializer = EngineerSerializer(data=request.data)
+        data = request.data.copy()  # Copy the request data to modify it
+        user = request.user
+        
+        # Ensure we link the user and role (from User model) to the Engineer profile
+        data['user'] = user.id  # Link the user to the engineer profile
+        data['role'] = user.role  # Assuming role is part of the User model
+
+        serializer = EngineerSerializer(data=data)
         if serializer.is_valid():
-            serializer.save(user=request.user)  # Assuming user is attached
+            serializer.save(user=request.user)  # Save the profile linked to the authenticated user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

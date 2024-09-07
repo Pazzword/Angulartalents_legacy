@@ -39,24 +39,28 @@ export class HeaderComponent {
       if (isLoggedIn) {
         this.myProfileSub = this.auth.getMyProfile().subscribe({
           next: (res) => {
-            this.myProfileImg = res.user?.Avatar || res.user?.Logo || 'assets/empty-avatar.png';
-            this.myProfileID = res.user?.ID;
+            const user = res.user || {};
+            this.myProfileImg = user.Avatar || user.Logo || 'assets/empty-avatar.png';
+            this.myProfileID = user.ID;
+            
             if (res.type === 'engineer') {
-                this.showMyEngineerProfile = true;
-                this.myProfileName = `${res.user?.Firstname || ''} ${res.user?.Lastname || ''}`;
+              this.showMyEngineerProfile = true;
+              this.myProfileName = `${user.Firstname || ''} ${user.Lastname || ''}`;
             }
+            
             if (res.type === 'recruiter') {
-                this.showMyBusinessProfile = true;
-                this.myProfileName = `${res.user?.Firstname || ''} ${res.user?.Lastname || ''}`;
-            }
-        },
-          error: (error) => {
-            console.error(error);
-            if (error.error.code === 'authentication.validate_token') {
-              this.auth.signout();
+              this.showMyBusinessProfile = true;
+              this.myProfileName = `${user.Firstname || ''} ${user.Lastname || ''}`;
             }
           },
+          error: (error) => {
+            console.error(error);
+            if (error.error?.code === 'authentication.validate_token') {
+              this.auth.signout();
+            }
+          }
         });
+        
       }
     });
   }

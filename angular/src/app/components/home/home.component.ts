@@ -34,10 +34,10 @@ export class HomeComponent {
         if (res) {
           res.engineers.forEach((e: any) => {
             if (e.Avatar.includes('https://res.cloudinary.com')) {
-              let urlString = e.Avatar.replace('https://res.cloudinary.com/rmsmms/image/upload/', '').replace('.jpg', '').slice(12);
+              let urlString = e.Avatar.replace('https://res.cloudinary.com/dogx6peuh/image/upload/', '').replace('.jpg', '').slice(12);
               // changing the image quality setting from cloudinary
               this.imgObj = new CloudinaryImage(urlString, {
-                cloudName: 'rmsmms',
+                cloudName: 'dogx6peuh',
               }).format('auto').delivery(quality('auto:best'));
               // get the string for the img tag
               e.Avatar = this.imgObj.toURL();

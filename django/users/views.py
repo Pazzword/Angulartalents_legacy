@@ -26,29 +26,40 @@ class RegisterView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         # Get the role from the request data
         role = request.data.get('role', None)
+        logger.debug(f"Role received in registration: {role}")
         if not role:
             return Response({'error': 'Role is required'}, status=status.HTTP_400_BAD_REQUEST)
         
+        # Call the parent class's create method to handle user creation
         response = super().create(request, *args, **kwargs)
-        user = User.objects.get(email=response.data['email'])
         
+        # Retrieve the created user using their email
+        user = User.objects.get(email=response.data['email'])
+
         # Set the user role
         user.role = role
         user.save()
 
-        # Generate tokens
+        # Check if the role has been saved
+        logger.debug(f"User role after saving: {user.role}")
+
+        # Generate tokens for the user
         refresh = RefreshToken.for_user(user)
-        
+
         # Return response with role information
         return Response({
             'user': {
                 'email': user.email,
                 'is_verified': user.is_verified,
-                'role': user.role,  # Include role information
+                'role': user.role,
             },
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         })
+
+
+
+
 
 
 # Class-based view for retrieving user profile information

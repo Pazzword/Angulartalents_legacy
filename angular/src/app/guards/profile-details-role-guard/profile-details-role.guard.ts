@@ -20,19 +20,29 @@ export class ProfileDetailsRoleGuard implements CanActivate {
   ): Observable<boolean> {
     return this.auth.getMyProfile().pipe(
       tap((profile: any) => {
+        // Log role details for debugging
+        console.log(`Guard check - Role from profile: ${profile.type}, Expected role: ${route.data['role']}`);
+
+        // Allow access if the user role matches the expected role
         if (profile.type === route.data['role']) {
-          this.route.navigate(['/']); // Navigate to home if access is not granted
-          return false;
+          console.log('Role matches. Access granted.');
+          return true;
         }
+
+        // Specific access for recruiters
         if (profile.type === 'recruiter') {
+          console.log('Recruiter role found. Access granted.');
           return true; // Allow access for recruiters
-        } else {
-          return false; // Deny access for others
         }
+
+        // For other users, deny access
+        console.log('Access denied. Redirecting to home.');
+        this.route.navigate(['/']);
+        return false;
       }),
       catchError((err) => {
-        console.log(err.error.code);
-        this.route.navigate(['/']); // Redirect to home on error
+        console.error('Error occurred in guard:', err);  // Improved error logging
+        this.route.navigate(['/']);
         return of(false);
       })
     );
