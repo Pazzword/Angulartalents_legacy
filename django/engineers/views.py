@@ -1,17 +1,49 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from .models import Engineer
 from .serializers import EngineerSerializer
 from users.models import User
 from django.utils.decorators import method_decorator
 from engineers.decorators import engineer_required
-# CLOUDINARY
 from rest_framework.parsers import MultiPartParser, FormParser
 from cloudinary.uploader import upload
 from django.http import JsonResponse
+import json
 
+class EngineerMeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        engineer = Engineer.objects.filter(user=user).first()
+        if engineer:
+            serializer = EngineerSerializer(engineer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Engineer profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        user = request.user
+        engineer = Engineer.objects.filter(user=user).first()
+        if not engineer:
+            return Response({'detail': 'Engineer profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = EngineerSerializer(engineer, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            print("Serializer errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class EngineerCountView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        count = Engineer.objects.count()
+        return Response({'count': count})
 
 class EngineerListCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -44,18 +76,39 @@ class EngineerListCreateView(APIView):
 
     @method_decorator(engineer_required)
     def post(self, request):
-        data = request.data.copy()  # Copy the request data to modify it
-        user = request.user
-        
-        # Ensure we link the user and role (from User model) to the Engineer profile
-        data['user'] = user.id  # Link the user to the engineer profile
-        data['role'] = user.role  # Assuming role is part of the User model
+        data = request.data.copy()
 
-        serializer = EngineerSerializer(data=data)
+        # Parse role_type and role_level if they are JSON strings
+        if 'role_type' in data and isinstance(data['role_type'], str):
+            try:
+                data['role_type'] = json.loads(data['role_type'])
+            except json.JSONDecodeError:
+                pass  # Handle the error as needed
+
+        if 'role_level' in data and isinstance(data['role_level'], str):
+            try:
+                data['role_level'] = json.loads(data['role_level'])
+            except json.JSONDecodeError:
+                pass  # Handle the error as needed
+
+        # Add 'user' to data
+        data['user'] = str(request.user.id)  # Associate the engineer profile with the authenticated user
+
+        # Log the processed data
+        print("Processed data:", data)
+
+        # **Pass the request context to the serializer**
+        serializer = EngineerSerializer(data=data, context={'request': request})
+
         if serializer.is_valid():
-            serializer.save(user=request.user)  # Save the profile linked to the authenticated user
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            engineer = serializer.save()  # Save the profile
+            return Response({
+                'engineerId': str(engineer.id),  # Return the engineer ID
+                'message': 'Engineer profile created successfully'
+            }, status=status.HTTP_201_CREATED)
+        else:
+            print("Serializer errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EngineerDetailUpdateView(APIView):
@@ -74,11 +127,13 @@ class EngineerDetailUpdateView(APIView):
     def put(self, request, engineer_id):
         try:
             engineer = Engineer.objects.get(id=engineer_id)
-            serializer = EngineerSerializer(engineer, data=request.data, partial=True)
+            serializer = EngineerSerializer(engineer, data=request.data, partial=True, context={'request': request})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                print("Serializer errors:", serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Engineer.DoesNotExist:
             return Response({'error': 'Engineer not found'}, status=status.HTTP_404_NOT_FOUND)
 

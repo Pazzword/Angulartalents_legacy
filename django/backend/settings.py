@@ -161,7 +161,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:4200"
 ]
 
-# DO NOT USE FOR PRODUCTION - KEEP  AT "TRUE"
+# DO NOT USE FOR PRODUCTION - KEEP  AT "TRUE" ХУЙ
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

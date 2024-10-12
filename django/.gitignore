@@ -1,6 +1,7 @@
-.env
-env
+.environments
 
+env
+django/.env
 
 
 db.sqlite3

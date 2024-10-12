@@ -127,6 +127,7 @@ class LoginView(APIView):
             logger.debug(f"Login successful for user: {email}")
 
             return Response({
+                'user': UserSerializer(user).data,
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
                 'role': user.role,  # Include role in the response
