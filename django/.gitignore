@@ -1,4 +1,4 @@
-.environments
+.env
 
 env
 django/.env

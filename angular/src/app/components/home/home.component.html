@@ -33,18 +33,18 @@
               *ngIf="engineer?.SearchStatus === 'not_interested' || engineer?.SearchStatus === 'invisible'; else elseTemplate">
             </ng-container>
             <ng-template #elseTemplate>
-              <a class="engineer custom-box-shadow e-h" [routerLink]="['/engineers/details', engineer.ID]">
+              <a class="engineer custom-box-shadow e-h"  [routerLink]="['/engineers/details', engineer.id]">
                 <div class="flex-shrink-1">
                   <picture>
                     <img loading="lazy" fetchPriority="high"
-                      [src]="engineer?.Avatar ? engineer?.Avatar : 'assets/empty-avatar.png'"
+                      [src]="engineer?.avatar ? engineer?.avatar : 'assets/empty-avatar.png'"
                       class="rounded-circle profile-image" />
                   </picture>
                 </div>
 
                 <div class="engineer-info">
                   <div class="engineer-info-header">
-                    <h2 class="fs-5 fw-bold">{{ engineer.Tagline }}</h2>
+                    <h2 class="fs-5 fw-bold">{{ engineer.tag_line }}</h2>
                     <div class="engineer-info-status d-flex align-items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green"
                         class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -60,7 +60,7 @@
                   </div>
 
                   <div class="engineer-info-text">
-                    {{ engineer.Bio }}
+                    {{ engineer.bio }}
                   </div>
                 </div>
               </a>

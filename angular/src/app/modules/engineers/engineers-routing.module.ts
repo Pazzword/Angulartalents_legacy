@@ -15,10 +15,13 @@ const routes: Routes = [
     component: ProfileDetailsComponent,
   },
   {
-    path: 'form',
+    path: 'form/:id',  // Ensure form editing uses ID
     component: ProfileFormComponent,
-    // Use AuthGuard only to check if user is logged in
-    // Role is checked in the component logic itself
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'form',  // This route can be used when creating a new profile (no ID needed)
+    component: ProfileFormComponent,
     canActivate: [AuthGuard],
   },
   {

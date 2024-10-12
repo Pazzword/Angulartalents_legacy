@@ -12,15 +12,10 @@ import { AuthService } from 'src/app/services/auth.service';
 import { CloudinaryService } from 'src/app/services/cloudinary/cloudinary.service';
 import { CommonService } from 'src/app/services/common-service/common.service';
 import { EngineerService } from 'src/app/services/engineer-service/engineer.service';
-// import {
-//   LocationService,
-//   Maps,
-// } from 'src/app/services/location-service/location.service';
 import { errorMessageGenerator } from 'src/app/shared/helpers';
 import { regexValidator } from 'src/app/url-regex.validator';
+import { ChangeDetectorRef } from '@angular/core';
 
-const place = null as unknown as google.maps.places.PlaceResult;
-type Components = typeof place.address_components;
 @Component({
   selector: 'app-profile-update',
   templateUrl: './profile-update.component.html',
@@ -34,42 +29,11 @@ export class ProfileUpdateComponent {
   imgFile: any;
   loader = this.loadingBar.useRef();
 
-  constructor(
-    private router: Router,
-    // private locationService: LocationService,
-    private auth: AuthService,
-    private engineerService: EngineerService,
-    private ngZone: NgZone,
-    private fb: FormBuilder,
-    public cloudinary: CloudinaryService,
-    private loadingBar: LoadingBarService,
-    private commonService: CommonService
-  ) {
-    // locationService.api.then((maps) => {
-    //   this.initAutocomplete(maps);
-    // });
-  }
-  @ViewChild('search')
-  public searchElementRef!: ElementRef;
-
-  @ViewChild('map')
-  public mapElementRef!: ElementRef;
-
-  // @ViewChild('location') public locationElement!: ElementRef;
-
   roleTypes = [
     { name: 'Part-time contract', value: 'contract_part_time', checked: false },
     { name: 'Full-time contract', value: 'contract_full_time', checked: false },
-    {
-      name: 'Part-time employment',
-      value: 'employee_part_time',
-      checked: false,
-    },
-    {
-      name: 'Full-time employment',
-      value: 'employee_full_time',
-      checked: false,
-    },
+    { name: 'Part-time employment', value: 'employee_part_time', checked: false },
+    { name: 'Full-time employment', value: 'employee_full_time', checked: false },
   ];
 
   roleLevels = [
@@ -80,25 +44,23 @@ export class ProfileUpdateComponent {
     { name: 'C-Level', value: 'c_level', checked: false },
   ];
 
-  public place: any;
-
-  public locationFields = [
-    'name',
-    'cityName',
-    'stateCode',
-    'countryName',
-    'countryCode',
-  ];
-
-  // private map!: google.maps.Map;
   imageSrc: string = '';
   coverImg: string = '';
 
-  ngOnInit(): void {
-    this.cloudinary.onUploadedPhotoGetLink.subscribe((responseUrl: string) => {
-      this.imageSrc = responseUrl;
-    });
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    private engineerService: EngineerService,
+    private ngZone: NgZone,
+    private fb: FormBuilder,
+    public cloudinary: CloudinaryService,
+    private loadingBar: LoadingBarService,
+    private commonService: CommonService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
+  ngOnInit(): void {
+    // Initialize the form group with form controls
     this.profileForm = this.fb.group({
       id: ['', [Validators.required]],
       firstName: ['', Validators.required],
@@ -107,7 +69,6 @@ export class ProfileUpdateComponent {
       city: ['', Validators.required],
       state: [''],
       country: ['', Validators.required],
-      // location: ['', Validators.required],
       avatar: new FormControl(''),
       bio: ['', Validators.required],
       searchStatus: ['', Validators.required],
@@ -116,11 +77,12 @@ export class ProfileUpdateComponent {
       website: [
         '',
         [
+          // Validators.required, // Uncomment if website is required
           regexValidator(new RegExp('^((?!https://).)*$'), {
             http: 'true',
           }),
           regexValidator(
-            new RegExp('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'),
+            new RegExp('(https?://)?([\\da-z.-]+)\\.(com|co\\.uk)([\\/\\w .-]*)*\\/?'),
             { url: 'true' }
           ),
         ],
@@ -150,183 +112,214 @@ export class ProfileUpdateComponent {
         ],
       ],
     });
+
+    // Populate the form with the engineer's profile data
     this.setProfileToUpdate();
   }
 
   setProfileToUpdate() {
-    this.auth.getMyProfile().subscribe((myProfile) => {
-      if (myProfile.user.Avatar) {
-        this.imageSrc = myProfile.user.Avatar;
-        this.myProfile = myProfile.user;
+    // Fetch the engineer profile directly
+    this.engineerService.getMyEngineerProfile().subscribe(
+      (engineerProfile) => {
+        console.log('ProfileUpdateComponent - engineerProfile:', engineerProfile);
+
+        if (engineerProfile) {
+          // Set avatar if available
+          if (engineerProfile.avatar) {
+            this.imageSrc = engineerProfile.avatar;
+          }
+
+          // Handle social links (remove prefix to populate input fields)
+          const noPrefixLinkedIn =
+            engineerProfile.linkedIn?.split('https://www.linkedin.com/in/')[1] || '';
+          const noPrefixWebsite = engineerProfile.website?.split('https://')[1] || '';
+          const noPrefixGithub =
+            engineerProfile.github?.split('https://github.com/')[1] || '';
+          const noPrefixTwitter =
+            engineerProfile.twitter?.split('https://twitter.com/')[1] || '';
+          const noPrefixStackOverflow =
+            engineerProfile.stackoverflow?.split('https://stackoverflow.com/users/')[1] ||
+            '';
+
+          // Patch form values
+          this.profileForm.patchValue({
+            id: engineerProfile.id,
+            firstName: engineerProfile.first_name,
+            lastName: engineerProfile.last_name,
+            tagLine: engineerProfile.tag_line,
+            city: engineerProfile.city,
+            country: engineerProfile.country,
+            avatar: engineerProfile.avatar,
+            bio: engineerProfile.bio,
+            searchStatus: engineerProfile.search_status,
+            website: noPrefixWebsite,
+            github: noPrefixGithub,
+            twitter: noPrefixTwitter,
+            linkedIn: noPrefixLinkedIn,
+            stackoverflow: noPrefixStackOverflow,
+          });
+
+          // Set role types if available
+          if (engineerProfile.role_type && Array.isArray(engineerProfile.role_type)) {
+            let roleTypeArr = this.profileForm.controls['roleType'] as FormArray;
+            engineerProfile.role_type.forEach((roleType: any) => {
+              roleTypeArr.push(new FormControl(roleType));
+              this.roleTypes.forEach((item) => {
+                if (roleType === item.value) {
+                  item.checked = true;
+                }
+              });
+            });
+          }
+
+          // Set role levels if available
+          if (engineerProfile.role_level && Array.isArray(engineerProfile.role_level)) {
+            let roleLevelArr = this.profileForm.controls['roleLevel'] as FormArray;
+            engineerProfile.role_level.forEach((roleLevel: any) => {
+              roleLevelArr.push(new FormControl(roleLevel));
+              this.roleLevels.forEach((item) => {
+                if (roleLevel === item.value) {
+                  item.checked = true;
+                }
+              });
+            });
+          }
+
+          // Detect changes manually
+          this.cdr.detectChanges();
+
+          // Disable certain form controls if needed
+          this.profileForm.controls['github'].disable();
+          this.profileForm.controls['linkedIn'].disable();
+
+          // Mark form fields as touched to ensure UI update
+          this.profileForm.markAllAsTouched();
+        } else {
+          console.error('Engineer profile is undefined');
+        }
+      },
+      (error) => {
+        console.error('Error fetching engineer profile:', error);
       }
-      const noPrefixLinkedIn = myProfile.user.LinkedIn.split(
-        'https://www.linkedin.com/in/'
-      )[1];
-      const noPrefixWebsite = myProfile.user.Website.split('https://')[1];
-      const noPrefixGithub = myProfile.user.Github.split(
-        'https://github.com/'
-      )[1];
-      const noPrefixTwitter = myProfile.user.Twitter.split(
-        'https://twitter.com/'
-      )[1];
-      const noPrefixStackOverflow = myProfile.user.StackOverflow.split(
-        'https://stackoverflow.com/users/'
-      )[1];
-
-      this.profileForm.patchValue({
-        id: myProfile.user.ID,
-        firstName: myProfile.user.Firstname,
-        lastName: myProfile.user.Lastname,
-        tagLine: myProfile.user.Tagline,
-        city: myProfile.user.City,
-        country: myProfile.user.Country,
-        // location: `${myProfile.user.City} ${myProfile.user.Country}`,
-        avatar: myProfile.user.Avatar,
-        bio: myProfile.user.Bio,
-        searchStatus: myProfile.user.SearchStatus,
-        website: noPrefixWebsite,
-        github: noPrefixGithub,
-        twitter: noPrefixTwitter,
-        linkedIn: noPrefixLinkedIn,
-        stackoverflow: noPrefixStackOverflow,
-      });
-      let roleTypeArr = this.profileForm.controls['roleType'] as FormArray;
-      // setting previously saved roletype values to current form
-      myProfile.user.RoleType.forEach((roleType: any) => {
-        roleTypeArr.push(new FormControl(roleType));
-        this.roleTypes.forEach((item) => {
-          if (roleType === item.value) {
-            item.checked = true;
-          }
-        });
-      });
-
-      let roleLevelArr = this.profileForm.controls['roleLevel'] as FormArray;
-      // setting previously saved rolelevel values to current form
-      myProfile.user.RoleLevel.forEach((roleLevel: any) => {
-        roleLevelArr.push(new FormControl(roleLevel));
-        this.roleLevels.forEach((item) => {
-          if (roleLevel === item.value) {
-            item.checked = true;
-          }
-        });
-      });
-
-      this.profileForm.controls['github'].disable();
-      this.profileForm.controls['linkedIn'].disable();
-    });
+    );
   }
 
-  // submit the new changes of edit profile
+  // Submit the new changes of edit profile
   update() {
     this.submitted = true;
     this.errors = [];
+
+    if (this.profileForm.invalid) {
+      this.errors = errorMessageGenerator(this.profileForm.controls);
+      this.loader.stop();
+      return; // Prevent submission if the form is invalid
+    }
+
     this.loader.start();
 
-    // If user havent added new image
-    if (this.imgFile === undefined) {
-      const data = {
-        firstName: this.profileForm.value.firstName,
-        lastName: this.profileForm.value.lastName,
-        tagLine: this.profileForm.value.tagLine,
-        city: this.profileForm.value.city,
-        country: this.profileForm.value.country,
-        avatar: this.profileForm.value.avatar,
-        bio: this.profileForm.value.bio,
-        searchStatus: this.profileForm.value.searchStatus,
-        roleType: this.profileForm.value.roleType,
-        roleLevel: this.profileForm.value.roleLevel,
-        website: 'https://' + this.profileForm.value.website,
-        twitter: 'https://twitter.com/' + this.profileForm.value.twitter,
-        stackoverflow:
-          'https://stackoverflow.com/users/' +
-          this.profileForm.value.stackoverflow,
-      };
-      if (this.profileForm.valid) {
-        this.engineerService.updateEngineer(data).subscribe({
-          next: () => {
-            this.submitted = false;
-            this.commonService.updateUsersDataForHeader({
-              image: data.avatar,
-              firstName: data.firstName,
-              lastName: data.lastName
-            })
-            this.router.navigate([
-              'engineers/details',
-              this.profileForm.value.id,
-            ]);
-            this.loader.stop();
-
-          },
-          error: (err) => {
-            this.loader.stop();
-            console.error(err);
-          },
-        });
-      } else {
-        this.errors = errorMessageGenerator(this.profileForm.controls);
-        this.loader.stop();
+    const formatWebsite = (url: string) => {
+      if (!url) return '';
+      if (url.startsWith('http')) {
+        return url;
       }
-    } else {
-      // when user changed avatar
+      return 'https://' + url;
+    };
+
+    const formatTwitter = (handle: string) => {
+      if (!handle) return '';
+      if (handle.startsWith('http')) {
+        return handle;
+      }
+      return 'https://twitter.com/' + handle;
+    };
+
+    const formatStackOverflow = (urlPart: string) => {
+      if (!urlPart) return '';
+      if (urlPart.startsWith('http')) {
+        return urlPart;
+      }
+      return 'https://stackoverflow.com/users/' + urlPart;
+    };
+
+    // Prepare data without avatar
+    let data: any = {
+      id: this.profileForm.value.id,
+      first_name: this.profileForm.value.firstName,
+      last_name: this.profileForm.value.lastName,
+      tag_line: this.profileForm.value.tagLine,
+      city: this.profileForm.value.city,
+      country: this.profileForm.value.country,
+      bio: this.profileForm.value.bio,
+      search_status: this.profileForm.value.searchStatus,
+      role_type: this.profileForm.value.roleType,
+      role_level: this.profileForm.value.roleLevel,
+      website: formatWebsite(this.profileForm.value.website),
+      twitter: formatTwitter(this.profileForm.value.twitter),
+      stackoverflow: formatStackOverflow(this.profileForm.value.stackoverflow),
+    };
+
+    if (this.imgFile !== undefined) {
+      // When user changed avatar
       const formData = new FormData();
       formData.append('file', this.imgFile);
-      formData.append('upload_preset', 'yakyhtcu');
-      if (this.profileForm.valid) {
-        this.cloudinary.uploadImg(formData).subscribe({
-          next: (res) => {
-            this.profileForm.patchValue({ avatar: res.secure_url });
+      formData.append('upload_preset', 'flask-upload');
 
-            const data = {
-              firstName: this.profileForm.value.firstName,
-              lastName: this.profileForm.value.lastName,
-              tagLine: this.profileForm.value.tagLine,
-              city: this.profileForm.value.city,
-              country: this.profileForm.value.country,
-              avatar: res.secure_url,
-              bio: this.profileForm.value.bio,
-              searchStatus: this.profileForm.value.searchStatus,
-              roleType: this.profileForm.value.roleType,
-              roleLevel: this.profileForm.value.roleLevel,
-              website: 'https://' + this.profileForm.value.website,
-              twitter: 'https://twitter.com/' + this.profileForm.value.twitter,
-              stackoverflow:
-                'https://stackoverflow.com/users/' +
-                this.profileForm.value.stackoverflow,
-            };
-            this.engineerService.updateEngineer(data).subscribe({
-              next: () => {
-                this.submitted = false;
-                this.loader.stop();
-                this.commonService.updateUsersDataForHeader({
-                  image: data.avatar,
-                  firstName: data.firstName,
-                  lastName: data.lastName
-                })
-                this.router.navigate([
-                  'engineers/details',
-                  this.profileForm.value.id,
-                ]);
-              },
-              error: (err) => {
-                this.errors = errorMessageGenerator(this.profileForm.controls);
-                this.loader.stop();
-                console.error(err);
-              },
-            });
-          },
-          error: (err) => {
-            this.loader.stop();
-            console.error(err);
-          },
-        });
-      } else {
-        this.errors = errorMessageGenerator(this.profileForm.controls);
-        this.loader.stop();
-      }
+      this.cloudinary.uploadImg(formData).subscribe({
+        next: (res) => {
+          this.profileForm.patchValue({ avatar: res.secure_url });
+          data.avatar = res.secure_url;
 
+          this.submitUpdate(data);
+        },
+        error: (err) => {
+          this.loader.stop();
+          console.error('Image upload error:', err);
+        },
+      });
+    } else {
+      // User hasn't changed the avatar
+      data.avatar = this.profileForm.value.avatar;
+      this.submitUpdate(data);
     }
-    // this.commonService.updateEngineerName(this.profileForm.value.firstName)
+  }
+
+  submitUpdate(data: any) {
+    this.engineerService.updateEngineer(data).subscribe({
+      next: () => {
+        this.submitted = false;
+        this.commonService.updateUsersDataForHeader({
+          image: data.avatar,
+          firstName: data.first_name,
+          lastName: data.last_name,
+        });
+        this.router.navigate(['engineers/details', this.profileForm.value.id]);
+        this.loader.stop();
+      },
+      error: (err) => {
+        this.loader.stop();
+        console.error('Update error:', err);
+
+        if (err.status === 400 && err.error) {
+          // Backend validation error
+          this.setValidationErrors(err.error);
+        } else {
+          // Other errors
+          this.errors.push('An unexpected error occurred. Please try again later.');
+        }
+      },
+    });
+  }
+
+  setValidationErrors(errors: any) {
+    for (const field in errors) {
+      if (this.profileForm.controls[field]) {
+        // Set the error on the form control
+        this.profileForm.controls[field].setErrors({ serverError: errors[field][0] });
+      } else {
+        // Handle non-field errors
+        this.errors.push(`${field}: ${errors[field]}`);
+      }
+    }
   }
 
   // ROLE TYPE
@@ -374,6 +367,8 @@ export class ProfileUpdateComponent {
       this.imageSrc = event.target.result;
     };
   }
+}
+
 
   // LOCATION
   // initAutocomplete(maps: Maps) {
@@ -421,7 +416,7 @@ export class ProfileUpdateComponent {
   //     stateCode,
   //   };
   // }
-}
+
 
 // function getComponent(components: Components, name: string) {
 //   return components?.filter(

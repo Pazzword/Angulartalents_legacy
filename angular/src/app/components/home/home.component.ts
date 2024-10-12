@@ -12,13 +12,10 @@ import { Router } from '@angular/router';  // Import Router for navigation
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
-  engineers = new Array<any>();
-  tempEngineers = new Array<any>();
+  engineers: any[] = [];
   loading: boolean = true;
   loader = this.loadingBar.useRef();
   private engineersSub: Subscription;
-  imgObj: CloudinaryImage = new CloudinaryImage(); //needs to be initialized
-  imgString: string = ''; //CloudinaryImage;
 
   constructor(
     private engineerService: EngineerService,
@@ -28,44 +25,44 @@ export class HomeComponent {
 
   ngOnInit(): void {
     this.loader.start();
+
+    // Fetch engineers and handle Cloudinary images properly
     this.engineersSub = this.engineerService.getAllEngineers().subscribe({
       next: (res) => {
         this.loading = false;
-        if (res) {
-          res.engineers.forEach((e: any) => {
-            if (e.Avatar.includes('https://res.cloudinary.com')) {
-              let urlString = e.Avatar.replace('https://res.cloudinary.com/dogx6peuh/image/upload/', '').replace('.jpg', '').slice(12);
-              // changing the image quality setting from cloudinary
-              this.imgObj = new CloudinaryImage(urlString, {
-                cloudName: 'dogx6peuh',
-              }).format('auto').delivery(quality('auto:best'));
-              // get the string for the img tag
-              e.Avatar = this.imgObj.toURL();
-              this.tempEngineers.push(e);
+        if (res && res.engineers) {
+          this.engineers = res.engineers.map((engineer: any) => {
+            // If the avatar is hosted on Cloudinary, use the URL directly
+            if (engineer.avatar) {
+              engineer.avatar = engineer.avatar;
             } else {
-              this.tempEngineers.push(e);
+              engineer.avatar = 'assets/empty-avatar.png'; // Default avatar if not available
             }
+            return engineer;
           });
-          this.tempEngineers.length = 7;
-          this.engineers = this.tempEngineers;
+    
+          // Limit the display to a maximum of 7 engineers
+          this.engineers = this.engineers.slice(0, 7);
           this.loader.stop();
         } else {
           this.loader.stop();
         }
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error fetching engineers:', err);
         this.loader.stop();
       },
     });
   }
 
+  // Navigate to the role selection page
   onGetStarted(): void {
-    // Navigate to the role selection page
     this.router.navigate(['/role']);
   }
 
   ngOnDestroy(): void {
-    this.engineersSub.unsubscribe();
+    if (this.engineersSub) {
+      this.engineersSub.unsubscribe();
+    }
   }
 }

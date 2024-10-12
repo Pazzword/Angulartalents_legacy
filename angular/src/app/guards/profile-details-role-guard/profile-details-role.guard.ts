@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
-  Router,
+  Router, 
   RouterStateSnapshot,
 } from '@angular/router';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Injectable({
@@ -19,29 +19,33 @@ export class ProfileDetailsRoleGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     return this.auth.getMyProfile().pipe(
-      tap((profile: any) => {
-        // Log role details for debugging
-        console.log(`Guard check - Role from profile: ${profile.type}, Expected role: ${route.data['role']}`);
+      map((profile: any) => {
+        // Check for undefined or null properties
+        if (profile.user && profile.user.avatar) {
+          console.log(`Avatar found: ${profile.user.avatar}`);
+        } else {
+          console.warn('Avatar is missing or undefined');
+        }
 
-        // Allow access if the user role matches the expected role
+        // Existing role checks
+        console.log(
+          `Guard check - Role from profile: ${profile.type}, Expected role: ${route.data['role']}`
+        );
+
         if (profile.type === route.data['role']) {
-          console.log('Role matches. Access granted.');
           return true;
         }
 
-        // Specific access for recruiters
+        // Allow recruiters access
         if (profile.type === 'recruiter') {
-          console.log('Recruiter role found. Access granted.');
-          return true; // Allow access for recruiters
+          return true;
         }
 
-        // For other users, deny access
-        console.log('Access denied. Redirecting to home.');
         this.route.navigate(['/']);
         return false;
       }),
       catchError((err) => {
-        console.error('Error occurred in guard:', err);  // Improved error logging
+        console.error('Error occurred in guard:', err);
         this.route.navigate(['/']);
         return of(false);
       })

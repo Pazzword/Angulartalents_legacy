@@ -2,11 +2,25 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { LoadingBarService } from '@ngx-loading-bar/core';
 import { PaginationInstance } from 'ngx-pagination';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { EngineerService } from 'src/app/services/engineer-service/engineer.service';
 import { CloudinaryImage } from '@cloudinary/url-gen';
-import { quality } from "@cloudinary/url-gen/actions/delivery";
+import { quality } from '@cloudinary/url-gen/actions/delivery';
+
+interface CountryData {
+  name: {
+    common: string;
+    official?: string;
+    nativeName?: { [key: string]: { official: string; common: string } };
+  };
+  flags: {
+    svg: string;
+    png?: string;
+    alt?: string;
+  };
+}
+
 @Component({
   selector: 'app-engineers',
   templateUrl: './engineers.component.html',
@@ -14,33 +28,27 @@ import { quality } from "@cloudinary/url-gen/actions/delivery";
 })
 export class EngineersComponent {
   // variables
-  engineers = new Array<any>();
-  tempEngineers = new Array<any>();
+  isRecruiter: boolean = false;
+  isEngineer: boolean = false;
+  engineers: any[] = [];
   limit: number = 10;
   page: number = 1;
-  total: number = 22;  // TODO: I need total number of all engineers here from Axel
-  // pagesCount: Number[] = [1, 2, 3];
-  // startIndex = 0;
-  // endIndex = 5;
+  total: number = 22;
   recruiterId: number;
   engineerId: number;
   selectedLevelIndex: number;
   selectedTypeIndex: number;
   userIs: string;
-  // status: boolean = false;
   isMember: boolean = false;
   showBlur: boolean = false;
   showNotFound: boolean = false;
   showPagination: boolean = false;
   loading: boolean = true;
-  // countries: any = [];
   selectedCountry: string = '';
   selectedRoleLevel: string = '';
   selectedRoleType: string = '';
-  imgObj: CloudinaryImage = new CloudinaryImage(); //needs to be initialized
-  imgString: string = ''; //CloudinaryImage;
   keyword = 'name';
-  countriesData: any = [];
+  countriesData: { id: number; name: string; flag: string }[] = [];
   loader = this.loadingBar.useRef();
   private getMyProfileSub: Subscription;
   private getEngineersSub: Subscription;
@@ -49,7 +57,6 @@ export class EngineersComponent {
     itemsPerPage: 10,
     currentPage: 1,
   };
-
 
   roleLevels = [
     { name: 'Junior', value: 'junior', isSelected: false },
@@ -60,26 +67,10 @@ export class EngineersComponent {
   ];
 
   roleTypes = [
-    {
-      name: 'Part-time contract',
-      value: 'contract_part_time',
-      isSelected: false,
-    },
-    {
-      name: 'Full-time contract',
-      value: 'contract_full_time',
-      isSelected: false,
-    },
-    {
-      name: 'Part-time employment',
-      value: 'employee_part_time',
-      isSelected: false,
-    },
-    {
-      name: 'Full-time employment',
-      value: 'employee_full_time',
-      isSelected: false,
-    },
+    { name: 'Part-time contract', value: 'contract_part_time', isSelected: false },
+    { name: 'Full-time contract', value: 'contract_full_time', isSelected: false },
+    { name: 'Part-time employment', value: 'employee_part_time', isSelected: false },
+    { name: 'Full-time employment', value: 'employee_full_time', isSelected: false },
   ];
 
   constructor(
@@ -87,74 +78,65 @@ export class EngineersComponent {
     private auth: AuthService,
     private http: HttpClient,
     private loadingBar: LoadingBarService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loader.start();
     this.http
-      .get('https://restcountries.com/v3.1/all?fields=name,flags')
+      .get<CountryData[]>('https://restcountries.com/v3.1/all?fields=name,flags')
       .subscribe({
         next: (data) => {
-          for (const [key, value] of Object.entries(data)) {
+          data.forEach((value, index) => {
             this.countriesData.push({
-              id: Number(key + 1),
+              id: index + 1,
               name: value.name.common,
               flag: value.flags.svg,
             });
-          }
+          });
         },
         error: (err) => console.error(err),
       });
-    this.getMyProfileSub = this.auth.getMyProfile().subscribe({
-      next: (res) => {
-        if (res.type === 'recruiter' && res.user.IsMember) {
-          this.recruiterId = res.user.ID;
-          this.isMember = true;
-          this.showBlur = true;
-          this.userIs = 'recruiter';
-        } else {
-          this.engineerId = res.user.ID;
-          this.userIs = 'engineer';
-        }
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
-    this.engineerService.getEngineersCount().subscribe({
-      next: (res => this.total = res.engineers_count),
-      error: (err) => console.error(err)
-    })
-    // TODO need to get number of all engineers and set it in total
+  
+      this.getMyProfileSub = this.auth.getMyProfile().subscribe({
+        next: (res) => {
+          if (res.role === 'recruiter') {
+            this.recruiterId = res.id;
+            this.userIs = 'recruiter';
+            this.isRecruiter = true;
+            this.isMember = res.IsMember || false; // Adjust if necessary
+          } else if (res.role === 'engineer') {
+            this.engineerId = res.id;
+            this.userIs = 'engineer';
+            this.isEngineer = true;
+            this.isMember = true; // Adjust if necessary
+          } else {
+            this.isMember = false;
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.isMember = false;
+        },
+      });
+
+      this.engineerService.getEngineersCount().subscribe({
+        next: (res) => {
+          if (res && res.count !== undefined) {
+            this.total = res.count;
+          } else {
+            console.error('Engineers count is missing.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching engineers count:', err);
+        },
+      });
+
+    // Fetch engineers
     this.getEngineers();
   }
 
-  // getPageAmout(length: number){
-
-  //   console.log(this.engineers.length)
-  //   return new Array(length/20)
-  // }
-
-  // getIndex(pageIndex: number){
-  // //   this.startIndex = pageIndex * 5;
-  // //  this.endIndex = this.startIndex + 5;
-  //  this.page = pageIndex+1
-  //  this.getEngineers()
-  // }
-  // prevIndex(){
-  //   this.page--
-  //   console.log(this.page)
-  //   this.getEngineers()
-  // }
-  // nextIndex(){
-  //   this.page++
-  //   this.status = !this.status
-  //   console.log(this.page)
-  //   this.getEngineers()
-  // }
-
   getEngineers() {
-
     this.getEngineersSub = this.engineerService
       .getEngineers(
         this.page,
@@ -166,26 +148,19 @@ export class EngineersComponent {
       .subscribe({
         next: (res) => {
           if (res.engineers !== null) {
-            this.tempEngineers = [];
-            this.loading = false
-            this.showPagination = (res.engineers?.length < 10 && res.engineers && this.page === 1) ? false : true
+            this.loading = false;
+            this.showPagination =
+              res.engineers.length < 10 && this.page === 1 ? false : true;
             this.loader.stop();
-            res.engineers.forEach((e: any) => {
-              if (e.Avatar.includes('https://res.cloudinary.com')) {
-                let urlString = e.Avatar.replace('https://res.cloudinary.com/rmsmms/image/upload/', '').replace('.jpg', '').slice(12)
-                // changing the image quality setting from cloudinary
-                this.imgObj = new CloudinaryImage(urlString, {
-                  cloudName: 'dogx6peuh',
-                }).format('auto').delivery(quality('auto:best'));;
-                // get the string for the img tag
-                e.Avatar = this.imgObj.toURL();
-                this.tempEngineers.push(e)
-              } else {
-                this.tempEngineers.push(e)
-              }
-            })
-            this.engineers = this.tempEngineers;
-
+  
+            // Process each engineer's avatar
+            this.engineers = res.engineers.map((engineer: any) => {
+              engineer.avatar = this.processAvatarUrl(engineer.avatar);
+              return engineer;
+            });
+  
+            // Add this line to log engineers data
+            console.log('Engineers data:', this.engineers);
           } else {
             this.engineers = [];
           }
@@ -195,6 +170,33 @@ export class EngineersComponent {
           console.error(err);
         },
       });
+  }
+
+  processAvatarUrl(avatarUrl: string): string {
+    if (avatarUrl && avatarUrl.includes('https://res.cloudinary.com')) {
+      // Extract the public ID from the Cloudinary URL
+      const cloudName = 'dogx6peuh'; 
+      const urlPattern = `https://res.cloudinary.com/${cloudName}/image/upload/`;
+      let publicId = avatarUrl.replace(urlPattern, '');
+
+      // Remove any transformations and file extensions
+      if (publicId.includes('/')) {
+        const parts = publicId.split('/');
+        publicId = parts[parts.length - 1];
+      }
+      if (publicId.includes('.')) {
+        publicId = publicId.split('.')[0];
+      }
+
+      // Create the CloudinaryImage instance with desired transformations
+      const imgObj = new CloudinaryImage(publicId, { cloudName })
+        .format('auto')
+        .delivery(quality('auto:best'));
+
+      return imgObj.toURL();
+    } else {
+      return avatarUrl ? avatarUrl : 'assets/empty-avatar.png';
+    }
   }
 
   pageChangeEvent(event: number) {
@@ -216,14 +218,12 @@ export class EngineersComponent {
       .subscribe({
         next: (res) => {
           if (res.engineers) {
-            if (res.engineers.length < 10) {
-              this.page = 1;
-              this.showPagination = false;
-              this.engineers = res.engineers;
-            } else {
-              this.showPagination = true;
-              this.engineers = res.engineers;
-            }
+            this.showPagination = res.engineers.length < 10 ? false : true;
+            // Process each engineer's avatar
+            this.engineers = res.engineers.map((engineer: any) => {
+              engineer.avatar = this.processAvatarUrl(engineer.avatar);
+              return engineer;
+            });
           } else {
             this.showNotFound = true;
             this.showPagination = false;
@@ -241,7 +241,7 @@ export class EngineersComponent {
   }
 
   onCountryCleared(event: void) {
-    event === undefined ? (this.selectedCountry = '') : null;
+    this.selectedCountry = '';
   }
 
   handleChangeRoleLevel(e: any, index: any) {

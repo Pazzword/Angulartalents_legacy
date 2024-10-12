@@ -1,50 +1,46 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot,
+import { 
+  ActivatedRouteSnapshot, 
+  CanActivate, 
+  Router, 
+  RouterStateSnapshot 
 } from '@angular/router';
-import { catchError, Observable, of, tap } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators'; 
+import { AuthService } from '../../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
-  constructor(private auth: AuthService, private route: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
     return this.auth.getMyProfile().pipe(
-      tap((profile: any) => {
-        if (profile.type === route.data['role']) {
-          // Allow access if the role matches the expected role.
-          console.log(`Access granted for role: ${profile.type}`);
-          return true;
-        }
+      map((res: any) => {
+        const selectedRole = res.type;  // Get the role from profile
 
-        if (profile.type === 'recruiter') {
-          console.log('Redirecting recruiter to business update.');
-          this.route.navigate(['business/update', profile.user.ID]);
+        if (selectedRole === 'engineer') {
+          // Redirect to the engineer form if role is engineer
+          this.router.navigate(['/engineers/form']);
+          return false;
+        } else if (selectedRole === 'recruiter') {
+          // Redirect to recruiter dashboard (example route)
+          this.router.navigate(['/business/form']);
           return false;
         }
 
-        if (profile.type === 'engineer') {
-          console.log('Redirecting engineer to engineer update.');
-          this.route.navigate(['engineers/update', profile.user.ID]);
-          return false;
-        }
-
-        return false;
+        // If no role is assigned, allow access
+        return true;
       }),
       catchError((err) => {
         console.error('Error in RoleGuard:', err);
-        return of(true); // Allow access on error.
+        this.router.navigate(['/signin']); 
+        return of(false);
       })
     );
   }
 }
-

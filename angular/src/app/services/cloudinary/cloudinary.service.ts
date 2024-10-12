@@ -2,7 +2,7 @@
 import { Injectable, NgZone, Output } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { FileUploader, FileUploaderOptions, ParsedResponseHeaders } from 'ng2-file-upload';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -81,18 +81,14 @@ export class CloudinaryService {
   }
 
   // This method needs to have the correct upload URL with a trailing slash
-  uploadImg(vals: any): Observable<any> {
-    const uploadUrl = 'http://localhost:8000/api/upload/';  // Include trailing slash
-
-    // Only use necessary headers to prevent CORS issues
+  uploadImg(formData: FormData): Observable<any> {
+    const uploadUrl = 'https://api.cloudinary.com/v1_1/dogx6peuh/image/upload';
+  
     const headers = new HttpHeaders({
       'X-Requested-With': 'XMLHttpRequest',
     });
-
-    console.log('Data being sent to Cloudinary:', vals); // Log the data being sent
-
-    // Perform the HTTP request with no authorization header
-    return this.http.post(uploadUrl, vals, { headers })
+  
+    return this.http.post(uploadUrl, formData, { headers })
       .pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status === 0) {
@@ -100,10 +96,11 @@ export class CloudinaryService {
           } else {
             console.error('Error uploading to Cloudinary:', error);
           }
-          return new Observable<any>();
+          return of(null);  // Use 'of(null)' instead of 'new Observable<any>()' to prevent hanging observables
         })
       );
   }
+  
 
 
   updateTitle(value: string) {

@@ -17,16 +17,11 @@ export class SignupComponent {
   repeatFieldTextType: boolean;
   loader = this.loadingBar.useRef(); // Loading bar reference
 
+  // Signup Form initialization
   signupForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],  // Email field validation
-    password: [
-      '',
-      Validators.compose([Validators.required, Validators.minLength(8)]),  // Password field validation
-    ],
-    confirmPassword: [
-      '',
-      [Validators.required],
-    ],
+    email: ['', [Validators.required, Validators.email]],  // Email validation
+    password: ['', [Validators.required, Validators.minLength(8)]],  // Password validation
+    confirmPassword: ['', Validators.required],  // Confirm password validation
   }, { validator: CustomValidators.MatchingPasswords });
 
   constructor(
@@ -48,28 +43,31 @@ export class SignupComponent {
     this.repeatFieldTextType = !this.repeatFieldTextType;
   }
 
+  // Sign up method
   signup() {
     console.log('Signup initiated');
-    this.loader.start(); // Start loading bar
+    this.loader.start(); // Start the loading bar
 
     // Check if form is valid
     if (this.signupForm.valid) {
       console.log('Signup form is valid');
 
-      const role = this.auth.getRole();  // Retrieve role from AuthService
+      // Retrieve the selected role from AuthService
+      const role = this.auth.getRole();  
       console.log('Role retrieved during signup:', role);
 
-      // Check if role is selected
+      // Ensure role is selected
       if (!role) {
         this.toastr.error('Role is not selected. Please go back and select a role.');
-        this.loader.stop(); // Stop loading bar
+        this.loader.stop(); // Stop the loading bar
         return;
       }
 
+      // Create the signup data
       const signupData = {
         email: this.signupForm.value.email,
         password: this.signupForm.value.password,
-        role: role  // Include role in the signup data
+        role: role  // Pass the role as part of the signup data
       };
 
       console.log('Signup data being sent:', signupData);
@@ -78,14 +76,23 @@ export class SignupComponent {
       this.auth.signup(signupData).subscribe({
         next: (response) => {
           console.log('Signup response:', response);  // Log success response
+
+          // If the role is engineer, redirect to the engineer's profile form
+          if (role === 'engineer') {
+            this.router.navigate(['/engineers/profile-form']);  // Redirect to profile form for engineers
+          } else {
+            // For recruiters or other roles, redirect elsewhere
+            this.router.navigate(['/dashboard']);  // Redirect to dashboard or other page
+          }
+
+          // Display success message
           this.toastr.success('Registration successful! Please check your email to verify your account.');
           this.signupForm.reset();  // Reset the form
-          this.router.navigate(['/email-verify']);  // Navigate to email verification page
-          this.loader.stop(); // Stop loading bar
+          this.loader.stop(); // Stop the loading bar
         },
         error: (error) => {
           console.error('Signup error:', error);  // Log error response
-          this.loader.stop(); // Stop loading bar
+          this.loader.stop(); // Stop the loading bar
 
           // Show error message based on response
           if (error.error.detail === 'user already created') {
@@ -97,7 +104,7 @@ export class SignupComponent {
       });
     } else {
       console.log('Signup form is invalid');
-      this.loader.stop(); // Stop loading bar
+      this.loader.stop(); // Stop the loading bar
       this.toastr.error('Please fill in the form correctly.');
     }
   }

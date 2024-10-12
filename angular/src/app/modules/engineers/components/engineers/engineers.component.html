@@ -44,8 +44,8 @@
     <div class="col-xs-12 col-lg-3 filters-desktop">
       <nav class="position-relative">
         <!-- Role level filter -->
-        <div [ngClass]="{ blur: !isMember && !showBlur }" class="accordion custom-box-shadow"
-          id="accordionPanelsStayOpenExample">
+        <div [ngClass]="{ blur: isEngineer }" class="accordion custom-box-shadow"
+  id="accordionPanelsStayOpenExample">
           <!-- <label class="search-profiles main-color">Search profiles</label>
           <div *ngIf="!isMember" class="private-info p-2 mb-2" [routerLink]="['/pricing']">
             <i class="bi bi-lock-fill"></i>
@@ -148,7 +148,7 @@
             <button class="btn btn-dark mx-2 fw-bold" (click)="applyFilter()">Apply</button>
           </div>
         </div>
-        <div class="filter-blur-block" *ngIf="!isMember && !showBlur">
+        <div class="filter-blur-block" *ngIf="isEngineer">
           <div class="blur-block-wrap mod">
             <p>To access filter</p>
             <button class="btn btn-success" [routerLink]="['/pricing']">
@@ -175,8 +175,8 @@
               let i = index
             ">
             <ng-container *ngIf="
-                engineer?.SearchStatus === 'not_interested' ||
-                  engineer?.SearchStatus === 'invisible';
+                engineer?.search_status === 'not_interested' ||
+                  engineer?.search_status === 'invisible';
                 else elseTemplate
               ">
             </ng-container>
@@ -187,12 +187,12 @@
                   else elseTemplate2
                 ">
                 <div [ngClass]="{ blur: !showBlur }">
-                  <a class="engineer custom-box-shadow e-h item" [routerLink]="['/engineers/details', engineer.ID]">
+                  <a class="engineer custom-box-shadow e-h item" [routerLink]="['/engineers/details', engineer.id || engineer.ID]">
                     <div class="flex-shrink-1">
                       <picture>
                         <img loading="lazy" fetchPriority="high" [src]="
-                            engineer?.Avatar
-                              ? engineer?.Avatar
+                            engineer?.avatar
+                              ? engineer?.avatar
                               : 'assets/empty-avatar.png'
                           " class="rounded-circle profile-image" />
                       </picture>
@@ -200,9 +200,9 @@
 
                     <div class="engineer-info">
                       <div class="engineer-info-header">
-                        <h2 class="fs-5 fw-bold main-color">{{ engineer.Tagline }}</h2>
+                        <h2 class="fs-5 fw-bold main-color">{{ engineer.tag_line }}</h2>
                         <div class="engineer-info-status d-flex align-items-center">
-                          <span [ngSwitch]="engineer?.SearchStatus">
+                          <span [ngSwitch]="engineer?.search_status">
                             <span *ngSwitchCase="'actively_looking'">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green"
                                 class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -228,19 +228,19 @@
                       </div>
 
                       <div class="engineer-info-text">
-                        {{ engineer.Bio }}
+                        {{ engineer.bio }}
                       </div>
                     </div>
                   </a>
                 </div>
               </ng-container>
               <ng-template #elseTemplate2>
-                <a class="engineer custom-box-shadow e-h item" [routerLink]="['/engineers/details', engineer.ID]">
+                <a class="engineer custom-box-shadow e-h item" [routerLink]="['/engineers/details', engineer.ID || engineer.id]">
                   <div class="flex-shrink-1">
                     <picture>
                       <img loading="lazy" fetchPriority="high" [src]="
-                          engineer?.Avatar
-                            ? engineer?.Avatar
+                          engineer?.avatar
+                            ? engineer?.avatar
                             : 'assets/empty-avatar.png'
                         " class="rounded-circle profile-image" />
                     </picture>
@@ -248,9 +248,9 @@
 
                   <div class="engineer-info">
                     <div class="engineer-info-header">
-                      <h2 class="fs-5 fw-bold main-color">{{ engineer.Tagline }}</h2>
+                      <h2 class="fs-5 fw-bold main-color">{{ engineer.tag_line }}</h2>
                       <div class="engineer-info-status d-flex align-items-center">
-                        <span [ngSwitch]="engineer?.SearchStatus">
+                        <span [ngSwitch]="engineer?.search_status">
                           <span *ngSwitchCase="'actively_looking'">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green"
                               class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -259,7 +259,7 @@
                             </svg>
                             Actively looking
                           </span>
-                          <span *ngSwitchCase="'open'" class="open-to-offers">
+                          <span *ngSwitchCase="'open'" class="'open'">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
                               class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                               <path
@@ -276,7 +276,7 @@
                     </div>
 
                     <div class="engineer-info-text">
-                      {{ engineer.Bio }}
+                      {{ engineer.bio }}
                     </div>
                   </div>
                 </a>
@@ -326,8 +326,8 @@
         <div class="col-xs-12 col-lg-3">
           <nav>
             <!-- Role level filter -->
-            <div [ngClass]="{ blur: !isMember && !showBlur }" class="accordion custom-box-shadow"
-              id="accordionPanelsStayOpenExample">
+            <div [ngClass]="{ blur: isEngineer }" class="accordion custom-box-shadow"
+  id="accordionPanelsStayOpenExample">
               <!-- <label class="search-profiles">Search profiles</label>
               <div *ngIf="!isMember" class="private-info p-2 mb-2" [routerLink]="['/pricing']">
                 <i class="bi bi-lock-fill"></i>
@@ -431,7 +431,7 @@
                 </button>
               </div>
             </div>
-            <div class="filter-blur-block" *ngIf="!isMember && !showBlur">
+            <div class="filter-blur-block" *ngIf="isEngineer">
               <div class="blur-block-wrap mod">
                 <p>To access filter</p>
                 <button class="btn btn-success" [routerLink]="['/pricing']">

@@ -4,6 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { CommonService } from 'src/app/services/common-service/common.service';
 import { EngineerService } from 'src/app/services/engineer-service/engineer.service';
+import { CloudinaryImage } from '@cloudinary/url-gen';  // Import CloudinaryImage
+import { quality } from '@cloudinary/url-gen/actions/delivery';  // Import quality
 
 @Component({
   selector: 'app-profile-details',
@@ -11,54 +13,88 @@ import { EngineerService } from 'src/app/services/engineer-service/engineer.serv
   styleUrls: ['./profile-details.component.scss'],
 })
 export class ProfileDetailsComponent {
-  engineer: any;
-  userIsMe: Boolean;
-  profileNotFoundError: Boolean = false;
-  recruiterIsMember: Boolean = false;
-  loading: Boolean = true;
+  engineer: any;  
+  userIsMe: boolean = false;  
+  profileNotFoundError: boolean = false;  
+  recruiterIsMember: boolean = false;
+  loading: boolean = true;
+  myProfile: any;  
+
   constructor(
     private engineerService: EngineerService,
     private route: ActivatedRoute,
     private auth: AuthService,
     private commonService: CommonService,
     private toastr: ToastrService
-  ) {
+  ) {}
 
-  }
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
-      this.engineerService
-        .getEngineer(params['id'])
-        .subscribe({
-          next: engineerFoundById => {
-            this.auth.getMyProfile().subscribe({
-              next: (myProfile) => {
-                this.loading = false;
-                if (myProfile.type === "recruiter") {
-                  this.recruiterIsMember = myProfile.user.IsMember;
-                }
-                if (myProfile.type === "engineer" && (myProfile.user.ID === params['id'])) {
-                  this.engineer = myProfile.user;
-                  this.userIsMe = myProfile.user.ID === params['id'];
-                } else {
-                  this.engineer = engineerFoundById.engineer;
-                }
-              },
-              error: (err) => {
-                this.loading = false;
-                this.engineer = engineerFoundById.engineer;
-                console.error(err);
+      const engineerProfileId = params['id']; 
+
+      // Fetch the logged-in user's profile
+      this.auth.getMyProfile().subscribe({
+        next: (myProfile) => {
+          this.myProfile = myProfile;  
+          const currentUserId = myProfile.id;
+
+          // Fetch the engineer profile by ID
+          this.engineerService.getEngineer(engineerProfileId).subscribe({
+            next: (engineerProfile) => {
+              this.engineer = engineerProfile;  
+
+              // Process the avatar URL
+              this.processAvatarUrl();
+
+              // Check if the logged-in user is viewing their own profile
+              if (engineerProfile.user === currentUserId || engineerProfile.user?.id === currentUserId) {
+                this.userIsMe = true;
               }
-            });
-          },
-          error: err => {
-            console.log('Profile not found');
-            console.error(err);
-            this.loading = false;
-            this.profileNotFoundError = true;
-          }
-        });
+
+              // For debugging purposes TODELETE
+              console.log('Current User ID:', currentUserId);
+              console.log('Engineer Profile User ID:', engineerProfile.user);
+            },
+            error: (err) => {
+              console.error('Profile not found:', err);
+              this.loading = false;
+              this.profileNotFoundError = true;
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Error fetching logged-in user profile:', err);
+          this.loading = false;
+        }
+      });
     });
   }
-  
+
+  processAvatarUrl() {
+    if (this.engineer.avatar && this.engineer.avatar.includes('https://res.cloudinary.com')) {
+      // Extract the public ID from the Cloudinary URL
+      const cloudName = 'dogx6peuh'; 
+      const urlPattern = `https://res.cloudinary.com/${cloudName}/image/upload/`;
+      let publicId = this.engineer.avatar.replace(urlPattern, '');
+
+      // Remove any transformations and file extensions
+      if (publicId.includes('/')) {
+        const parts = publicId.split('/');
+        publicId = parts[parts.length - 1];
+      }
+      if (publicId.includes('.')) {
+        publicId = publicId.split('.')[0];
+      }
+
+      // Create the CloudinaryImage instance with desired transformations
+      const imgObj = new CloudinaryImage(publicId, { cloudName })
+        .format('auto')
+        .delivery(quality('auto:best'));
+
+      this.engineer.avatar = imgObj.toURL();
+
+      // For debugging
+      console.log('Processed Engineer Avatar URL:', this.engineer.avatar);
+    }
+  }
 }

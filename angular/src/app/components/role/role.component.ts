@@ -11,22 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 export class RoleComponent {
   constructor(private auth: AuthService, private router: Router, private toastr: ToastrService) {}
 
-  ngOnInit(): void {
-    this.auth.getMyProfile().subscribe({
-      next: (res) => {
-        if (res.type === 'recruiter') {
-          this.router.navigate(['/business/form']); // Adjust redirect
-        } else if (res.type === 'engineer') {
-          this.router.navigate(['/engineers/form']); // Adjust redirect
-        } else {
-          this.router.navigate(['/role']);
-        }
-      },
-      error: () => {
-        this.router.navigate(['/role']);
-      }
-    });
-  }
+
 
   selectRole(role: string) {
     console.log(`Selected role: ${role}`);

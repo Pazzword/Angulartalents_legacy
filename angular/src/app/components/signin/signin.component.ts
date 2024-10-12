@@ -1,10 +1,12 @@
+// signin.component.ts
+
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoadingBarService } from '@ngx-loading-bar/core';
 import { ToastrService } from 'ngx-toastr';
-
+import { CommonService } from 'src/app/services/common-service/common.service'; // Import CommonService
 
 @Component({
   selector: 'app-signin',
@@ -29,7 +31,8 @@ export class SigninComponent {
     private fb: FormBuilder,
     private router: Router,
     private loadingBar: LoadingBarService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private commonService: CommonService // Inject CommonService
   ) {}
 
   toggleFieldTextType() {
@@ -47,24 +50,41 @@ export class SigninComponent {
       this.toastr.error('Please fill in your email and password');
       return;
     }
-  
+
     const reqObject = {
       email: this.signinForm.value.email!,
       password: this.signinForm.value.password!,
     };
-  
+
     this.auth.signin(reqObject).subscribe({
       next: () => {
-        // Redirect to the 'role' route upon successful login
+        // Immediately fetch profile after login to determine role
         this.auth.getMyProfile().subscribe({
-          next: () => {
-            this.router.navigate(['/role']);
+          next: (profile) => {
+            console.log('Profile loaded during login:', profile);
+
+            // Update header with user data
+            this.commonService.updateUsersDataForHeader({
+              image: profile.avatar,
+              firstName: profile.first_name,
+              lastName: profile.last_name,
+            });
+
+            // Check the user's role and redirect accordingly
+            if (profile.type === 'engineer') {
+              this.router.navigate(['/engineers/form']); // Redirect to engineer form
+            } else if (profile.type === 'recruiter') {
+              this.router.navigate(['/business/form']); // Redirect to recruiter form
+            } else {
+              // If no valid role, fallback to the role selection page
+              this.router.navigate(['']);
+            }
             this.loader.stop();
           },
           error: (err) => {
             console.error('Profile loading error', err);
             this.toastr.error('Failed to load profile. Redirecting to role setup.');
-            this.router.navigate(['/role']);
+            this.router.navigate(['/role']); // Fallback if there's an error fetching profile
             this.loader.stop();
           },
         });
@@ -76,19 +96,16 @@ export class SigninComponent {
           console.log(err);
           this.confirmEmailError = true;
           this.toastr.error('Email not verified. Please check your inbox.');
-          this.loader.stop();
         } else if (err.status === 401) {
           console.log(err);
           this.showError = true;
           this.toastr.error('Invalid email or password. Please try again.');
-          this.loader.stop();
         } else {
           console.log(err);
           this.toastr.error('An error occurred. Please try again.');
-          this.loader.stop();
         }
+        this.loader.stop();
       },
     });
   }
-  
 }
