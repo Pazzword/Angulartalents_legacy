@@ -155,6 +155,10 @@ export class AuthService {
       },
       error: (err) => {
         console.error('Error fetching engineer profile:', err);
+        if (err.status === 404) {
+          console.log('Engineer profile not found. Redirecting to create form.');
+          this.router.navigate(['/engineers/form']);
+        }
       },
     });
   }

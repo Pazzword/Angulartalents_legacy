@@ -28,57 +28,51 @@ export class AuthGuard implements CanActivate {
       map((loggedIn: boolean) => {
         const token = localStorage.getItem('token');
         const selectedRole = this.auth.getRole();
-
-        console.log('AuthGuard - token:', token);
-        console.log('AuthGuard - selectedRole:', selectedRole);
-        console.log('AuthGuard - isLoggedIn:', loggedIn);
-
+  
+        // Allow access to specific routes without authentication
+        const publicRoutes = ['/email-verify'];
+        const isPublicRoute = publicRoutes.some((publicRoute) =>
+          state.url.startsWith(publicRoute)
+        );
+  
+        if (isPublicRoute) {
+          return true; // Allow access without authentication
+        }
         // If the user is not logged in or the token is invalid/expired
         if (!loggedIn || !token || this.jwtHelper.isTokenExpired(token)) {
-          console.log(
-            'AuthGuard - Token is expired or user not logged in, redirecting to signin'
-          );
           this.auth.setIsLoggedIn(false);
           this.router.navigate(['signin']);
           return false;
         }
-
+  
         // If no role is assigned, redirect to role selection
         if (!selectedRole) {
-          console.log('AuthGuard - No role assigned, redirecting to role selection');
           this.router.navigate(['role']);
           return false;
         }
-
-        // Allow engineers to access certain routes
+  
+        // Engineer-specific route handling
         if (selectedRole === 'engineer') {
-          // Define allowed engineer routes
           const allowedEngineerRoutes = [
             '/engineers/form',
             '/engineers/update',
             '/engineers/details',
           ];
-
-          // Check if the current URL starts with any allowed route
+  
           const isAllowedRoute = allowedEngineerRoutes.some((routePrefix) =>
             state.url.startsWith(routePrefix)
           );
-
+  
           if (!isAllowedRoute) {
-            console.log(
-              'AuthGuard - Engineer role detected, navigating to engineer update page'
-            );
-            const engineerId = this.auth.getUserId(); // Get the engineer's ID
+            const engineerId = this.auth.getUserId();
             this.router.navigate(['/engineers/update', engineerId]);
             return false;
           }
         }
-
-        // For recruiters, you might have similar logic if needed
-        // ...
-
+  
         return true; // Allow access
       })
     );
   }
+  
 }
