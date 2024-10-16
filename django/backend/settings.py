@@ -4,6 +4,7 @@ from mongoengine import connect
 from dotenv import load_dotenv
 import os
 import environ
+import sys
 
 # Load environment variables from .env file
 load_dotenv()
@@ -27,7 +28,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
 # MongoDB configuration using mongoengine
-connect(host=os.getenv('MONGO_URI'))
+if 'test' not in sys.argv:
+    connect(host=os.getenv('MONGO_URI'))
 
 DEBUG = True
 

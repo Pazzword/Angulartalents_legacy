@@ -29,6 +29,8 @@ import { TermsAndConditionsComponent } from './components/terms-and-conditions/t
 import { VerifyComponent } from './components/verify/verify/verify.component';
 import { MainComponent } from './components/main/main/main.component';
 import { EmailVerifyComponent } from './components/email-verify/email-verify/email-verify.component';
+import { environment } from 'environments/environments';
+
 
 @NgModule({
   declarations: [
@@ -61,10 +63,8 @@ import { EmailVerifyComponent } from './components/email-verify/email-verify/ema
     LoadingBarModule,
     CloudinaryModule.forRoot({ Cloudinary },
       {
-        cloud_name: 'dogx6peuh',       // New cloud name
-        api_key: '627267722279487',    // New API key
-        api_secret: 'cSl8fWUWCofMq--HGckWUPf39gY',  // New API secret
-        upload_preset: 'flask-upload' 
+        cloud_name: environment.cloudinary.cloud_name,      
+        upload_preset: environment.cloudinary.upload_preset
       } as CloudinaryConfiguration),
     FileUploadModule,
   ],

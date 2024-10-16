@@ -32,7 +32,7 @@ const routes: Routes = [
       { path: 'privacy', component: PrivacyPolicyComponent },
       { path: 'terms', component: TermsAndConditionsComponent },
       { path: 'about', component: AboutComponent },
-      { path: 'email-verify/:verificationCode', component: EmailVerifyComponent },
+      { path: 'email-verify', component: EmailVerifyComponent },
       {
         path: 'engineers',
         loadChildren: () =>

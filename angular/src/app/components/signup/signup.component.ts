@@ -77,13 +77,8 @@ export class SignupComponent {
         next: (response) => {
           console.log('Signup response:', response);  // Log success response
 
-          // If the role is engineer, redirect to the engineer's profile form
-          if (role === 'engineer') {
-            this.router.navigate(['/engineers/profile-form']);  // Redirect to profile form for engineers
-          } else {
-            // For recruiters or other roles, redirect elsewhere
-            this.router.navigate(['/dashboard']);  // Redirect to dashboard or other page
-          }
+          this.router.navigate(['/email-verify']);  // Redirect to dashboard or other page
+          
 
           // Display success message
           this.toastr.success('Registration successful! Please check your email to verify your account.');

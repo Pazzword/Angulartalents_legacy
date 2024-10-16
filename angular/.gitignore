@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+angular/environments/
 /environments/environments.prod.ts
 /environments/environments.ts
 # Node

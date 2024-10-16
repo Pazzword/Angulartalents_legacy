@@ -77,7 +77,6 @@ export class ProfileUpdateComponent {
       website: [
         '',
         [
-          // Validators.required, // Uncomment if website is required
           regexValidator(new RegExp('^((?!https://).)*$'), {
             http: 'true',
           }),

@@ -1,9 +1,11 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+# backend/users/models.py
+
 from mongoengine import Document, EmailField, StringField, BooleanField, UUIDField
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 
 class User(Document):
-    id = UUIDField(primary_key=True, default=uuid.uuid4)  # Use MongoEngine's UUIDField
+    id = UUIDField(primary_key=True, default=uuid.uuid4, binary=True)  # Ensure binary=True
     email = EmailField(required=True, unique=True)
     password_hash = StringField(required=True)
     role = StringField(choices=('engineer', 'recruiter'), null=True)
@@ -20,16 +22,16 @@ class User(Document):
 
     @property
     def is_authenticated(self):
-        return True  # Return True since the user is authenticated if this method is called
+        return True
 
     @property
     def is_anonymous(self):
-        return False  # Return False since this user is not anonymous
+        return False
 
     @property
     def is_active(self):
-        return True  # If the user should be considered active
+        return True
 
     @property
     def get_username(self):
-        return self.email  # Or return another unique identifier
+        return self.email
