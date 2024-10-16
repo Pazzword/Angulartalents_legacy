@@ -3,7 +3,8 @@
   <header class="header">
     <h1 class="main-color">
       The reverse job board for
-      Angular <div class="words">
+      Angular
+      <div class="words">
         <span></span>
         <span>developers</span>
         <span>magicians</span>
@@ -13,9 +14,15 @@
         <span>wizards</span>
       </div>
     </h1>
-    <p class="mb-4">Angular talents empowers independent developers available for their next gig.
-      Stop scouring job boards and sit back as companies reach out to you first.</p>
-    <div class="center"><a class="pushme" [routerLink]="[ '/role']"> <span class="inner">Get started</span></a></div>
+    <p class="mb-4">
+      Angular talents empowers independent developers available for their next gig.
+      Stop scouring job boards and sit back as companies reach out to you first.
+    </p>
+    <div class="center">
+      <a class="pushme" [routerLink]="['/role']">
+        <span class="inner">Get started</span>
+      </a>
+    </div>
   </header>
 
   <div class="row">
@@ -29,16 +36,17 @@
       <main>
         <div class="engineer-wrapper w-75 m-auto" *ngIf="!loading">
           <div *ngFor="let engineer of engineers">
-            <ng-container
-              *ngIf="engineer?.SearchStatus === 'not_interested' || engineer?.SearchStatus === 'invisible'; else elseTemplate">
-            </ng-container>
-            <ng-template #elseTemplate>
-              <a class="engineer custom-box-shadow e-h"  [routerLink]="['/engineers/details', engineer.id]">
+            <!-- Exclude engineers with 'not_interested' or 'invisible' statuses -->
+            <ng-container *ngIf="!excludedStatuses.includes(engineer.search_status)">
+              <a class="engineer custom-box-shadow e-h" [routerLink]="['/engineers/details', engineer.id]">
                 <div class="flex-shrink-1">
                   <picture>
-                    <img loading="lazy" fetchPriority="high"
-                      [src]="engineer?.avatar ? engineer?.avatar : 'assets/empty-avatar.png'"
-                      class="rounded-circle profile-image" />
+                    <img
+                      loading="lazy"
+                      fetchPriority="high"
+                      [src]="engineer.avatar || 'assets/empty-avatar.png'"
+                      class="rounded-circle profile-image"
+                    />
                   </picture>
                 </div>
 
@@ -46,15 +54,52 @@
                   <div class="engineer-info-header">
                     <h2 class="fs-5 fw-bold">{{ engineer.tag_line }}</h2>
                     <div class="engineer-info-status d-flex align-items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green"
-                        class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                        <path
-                          d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                      </svg>
-                      <span class="mx-1">Actively looking</span>
+                      <!-- Dynamic status display -->
+                      <span [ngSwitch]="engineer.search_status">
+                        <!-- Actively Looking -->
+                        <ng-container *ngSwitchCase="'actively_looking'">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="green"
+                            viewBox="0 0 16 16"
+                            class="bi bi-check-circle-fill"
+                          >
+                            <path
+                              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"
+                            ></path>
+                            <path
+                              d="M12.146 5.146a.5.5 0 0 1 .708.708L8 9.207l-2.146-2.147a.5.5 0 1 1 .708-.708L8 7.793l3.438-3.439a.5.5 0 0 1 .708.708L8.707 8.5l3.439 3.439a.5.5 0 0 1-.708.708L8 9.207l-2.146 2.147a.5.5 0 1 1-.708-.708L7.293 8.5 3.854 5.061a.5.5 0 0 1 .708-.708L8 7.793l3.438-3.439a.5.5 0 0 1 .708.708L8.707 8.5z"
+                            ></path>
+                          </svg>
+                          <span class="mx-1">Actively looking</span>
+                        </ng-container>
+
+                        <!-- Open to Offers -->
+                        <ng-container *ngSwitchCase="'open'">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="gray"
+                            viewBox="0 0 16 16"
+                            class="bi bi-check-circle-fill"
+                          >
+                            <path
+                              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"
+                            ></path>
+                            <path
+                              d="M12.146 5.146a.5.5 0 0 1 .708.708L8 9.207l-2.146-2.147a.5.5 0 1 1 .708-.708L8 7.793l3.438-3.439a.5.5 0 0 1 .708.708L8.707 8.5l3.439 3.439a.5.5 0 0 1-.708.708L8 9.207l-2.146 2.147a.5.5 0 1 1-.708-.708L7.293 8.5 3.854 5.061a.5.5 0 0 1 .708-.708L8 7.793l3.438-3.439a.5.5 0 0 1 .708.708L8.707 8.5z"
+                            ></path>
+                          </svg>
+                          <span class="mx-1">Open to offers</span>
+                        </ng-container>
+                      </span>
                     </div>
                   </div>
 
+                  <!-- You can handle 'New profile' logic here if needed -->
                   <div class="recently-active rounded-3">
                     <span>New profile</span>
                   </div>
@@ -63,15 +108,4 @@
                     {{ engineer.bio }}
                   </div>
                 </div>
-              </a>
-            </ng-template>
-
-          </div>
-          <button class="btn btn-dark float-end m-3" [routerLink]="[ '/engineers' ]">See more developers</button>
-        </div>
-      </main>
-    </div>
-    <!-- end of engineers -->
-  </div>
-</div>
-<router-outlet></router-outlet>
+           
