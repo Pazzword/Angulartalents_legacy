@@ -5,11 +5,14 @@ import { environment } from 'environments/environments';
 import { Router } from '@angular/router';
 import { tap, catchError } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode'; // Corrected import
+import { ToastrService } from 'ngx-toastr';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private toastr: ToastrService;
   url = environment.apiUrl;
   engineerImg: string | null = null;
   engineerImageChange = new Subject<string>();
@@ -19,6 +22,7 @@ export class AuthService {
   private userData: any = null; // Store user data
 
   constructor(private http: HttpClient, private router: Router) {
+    
     const token = localStorage.getItem('token');
     this._isLoggedIn$.next(!!token);
     console.log('AuthService: Initialized. Token exists:', !!token);
@@ -101,6 +105,7 @@ export class AuthService {
       }),
       catchError((error) => {
         console.error('Signin error:', error);
+        this.toastr.error('Incorrect details.');
         return of(null); // Return null or handle the error appropriately
       })
     );
