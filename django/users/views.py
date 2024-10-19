@@ -1,4 +1,3 @@
-# views.py
 from django.shortcuts import redirect
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_mongoengine.generics import CreateAPIView, RetrieveAPIView
@@ -14,7 +13,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import logging
 
-# Setup logger
 logger = logging.getLogger(__name__)
 
 # Class-based view for registering a new user
@@ -69,7 +67,7 @@ class ProfileView(RetrieveAPIView):
 
     def get_object(self):
         user = self.request.user
-        return user  # Return user instance, UserSerializer will handle the attributes
+        return user  
 
 
 @api_view(['GET'])
@@ -83,7 +81,7 @@ def verify_email(request, user_id, verification_code):
 
         if user.verification_code == verification_code:
             user.is_verified = True
-            user.verification_code = None  # Clear the verification code
+            user.verification_code = None  
             user.save()
 
             return redirect("http://localhost:4200/signin")  # Adjust this to your actual frontend URL
@@ -130,8 +128,8 @@ class LoginView(APIView):
                 'user': UserSerializer(user).data,
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-                'role': user.role,  # Include role in the response
-                'id': str(user.id)  # Include user ID for frontend routing
+                'role': user.role,  
+                'id': str(user.id)  
             }, status=status.HTTP_200_OK)
 
         except Exception as e:

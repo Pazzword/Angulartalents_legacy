@@ -1,5 +1,3 @@
-# backend/users/models.py
-
 from mongoengine import Document, EmailField, StringField, BooleanField, UUIDField
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid

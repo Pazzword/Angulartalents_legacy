@@ -261,7 +261,7 @@ export class ProfileUpdateComponent {
       // When user changed avatar
       const formData = new FormData();
       formData.append('file', this.imgFile);
-      formData.append('upload_preset', 'flask-upload');
+      formData.append('upload_preset', 'yakyhtcu');
 
       this.cloudinary.uploadImg(formData).subscribe({
         next: (res) => {

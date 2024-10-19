@@ -26,7 +26,7 @@ export class CloudinaryService {
     this.responses = [];
 
     const uploaderOptions: FileUploaderOptions = {
-      url: 'https://api.cloudinary.com/v1_1/dogx6peuh/upload',
+      url: 'https://api.cloudinary.com/v1_1/rmsmms/upload',
       autoUpload: true,
       isHTML5: true,
       removeAfterUpload: true,
@@ -40,7 +40,7 @@ export class CloudinaryService {
     this.uploader = new FileUploader(uploaderOptions);
 
     this.uploader.onBuildItemForm = (fileItem: any, form: FormData): any => {
-      form.append('upload_preset', 'flask-upload');
+      form.append('upload_preset', 'yakyhtcu');
       form.append('file', fileItem);
       fileItem.withCredentials = false;
       return { fileItem, form };
@@ -82,7 +82,7 @@ export class CloudinaryService {
 
   // This method needs to have the correct upload URL with a trailing slash
   uploadImg(formData: FormData): Observable<any> {
-    const uploadUrl = 'https://api.cloudinary.com/v1_1/dogx6peuh/image/upload';
+    const uploadUrl = 'https://api.cloudinary.com/v1_1/rmsmms/image/upload';
   
     const headers = new HttpHeaders({
       'X-Requested-With': 'XMLHttpRequest',
