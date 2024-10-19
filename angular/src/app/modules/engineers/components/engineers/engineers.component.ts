@@ -175,29 +175,29 @@ export class EngineersComponent {
   processAvatarUrl(avatarUrl: string): string {
     if (avatarUrl && avatarUrl.includes('https://res.cloudinary.com')) {
       // Extract the public ID from the Cloudinary URL
-      const cloudName = 'dogx6peuh'; 
+      const cloudName = 'rmsmms';
       const urlPattern = `https://res.cloudinary.com/${cloudName}/image/upload/`;
       let publicId = avatarUrl.replace(urlPattern, '');
-
-      // Remove any transformations and file extensions
-      if (publicId.includes('/')) {
-        const parts = publicId.split('/');
-        publicId = parts[parts.length - 1];
-      }
+  
+      // Remove the version prefix, like 'v1234567890/'
+      publicId = publicId.replace(/^v\d+\/?/, '');
+  
+      // Remove any file extensions
       if (publicId.includes('.')) {
-        publicId = publicId.split('.')[0];
+        publicId = publicId.substring(0, publicId.lastIndexOf('.'));
       }
-
+  
       // Create the CloudinaryImage instance with desired transformations
       const imgObj = new CloudinaryImage(publicId, { cloudName })
         .format('auto')
         .delivery(quality('auto:best'));
-
+  
       return imgObj.toURL();
     } else {
       return avatarUrl ? avatarUrl : 'assets/empty-avatar.png';
     }
   }
+  
 
   pageChangeEvent(event: number) {
     this.page = event;

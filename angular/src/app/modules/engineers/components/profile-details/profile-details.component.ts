@@ -30,54 +30,51 @@ export class ProfileDetailsComponent {
 
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
-      const engineerProfileId = params['id']; 
+      const engineerProfileId = params['id'];
   
-      // Fetch the logged-in user's profile
-      this.auth.getMyProfile().subscribe({
-        next: (myProfile) => {
-          this.myProfile = myProfile;  
-          const currentUserId = myProfile.id;
+      // Fetch the engineer profile by ID
+      this.engineerService.getEngineer(engineerProfileId).subscribe({
+        next: (engineerProfile) => {
+          this.engineer = engineerProfile;
   
-          // Fetch the engineer profile by ID
-          this.engineerService.getEngineer(engineerProfileId).subscribe({
-            next: (engineerProfile) => {
-              this.engineer = engineerProfile;  
+          // Remove the call to processAvatarUrl
+          // this.processAvatarUrl();
   
-              // Process the avatar URL
-              this.processAvatarUrl();
+          // Check if the logged-in user is viewing their own profile
+          this.auth.getMyProfile().subscribe({
+            next: (myProfile) => {
+              this.myProfile = myProfile;
+              const currentUserId = myProfile.id;
   
-              // Check if the logged-in user is viewing their own profile
-              if (engineerProfile.user === currentUserId || engineerProfile.user?.id === currentUserId) {
+              if (
+                engineerProfile.user === currentUserId ||
+                engineerProfile.user?.id === currentUserId
+              ) {
                 this.userIsMe = true;
               }
-  
-              // For debugging purposes TODELETE
-              console.log('Current User ID:', currentUserId);
-              console.log('Engineer Profile User ID:', engineerProfile.user);
-  
-              // **Set loading to false here**
               this.loading = false;
             },
             error: (err) => {
-              console.error('Profile not found:', err);
+              console.error('Error fetching logged-in user profile:', err);
               this.loading = false;
-              this.profileNotFoundError = true;
-            }
+            },
           });
         },
         error: (err) => {
-          console.error('Error fetching logged-in user profile:', err);
+          console.error('Profile not found:', err);
           this.loading = false;
-        }
+          this.profileNotFoundError = true;
+        },
       });
     });
   }
+  
   
 
   processAvatarUrl() {
     if (this.engineer.avatar && this.engineer.avatar.includes('https://res.cloudinary.com')) {
       // Extract the public ID from the Cloudinary URL
-      const cloudName = 'dogx6peuh'; 
+      const cloudName = 'rmsmms'; 
       const urlPattern = `https://res.cloudinary.com/${cloudName}/image/upload/`;
       let publicId = this.engineer.avatar.replace(urlPattern, '');
 

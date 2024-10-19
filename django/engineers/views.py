@@ -94,8 +94,8 @@ class EngineerListCreateView(APIView):
         # Add 'user' to data
         data['user'] = str(request.user.id)  # Associate the engineer profile with the authenticated user
 
-        # Log the processed data
-        print("Processed data:", data)
+        # Log the processed data not for production
+        # print("Processed data:", data)
 
         # **Pass the request context to the serializer**
         serializer = EngineerSerializer(data=data, context={'request': request})

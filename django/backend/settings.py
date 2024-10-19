@@ -62,9 +62,9 @@ SIMPLE_JWT = {
 }
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dogx6peuh',
-    'API_KEY': '627267722279487',
-    'API_SECRET': 'cSl8fWUWCofMq--HGckWUPf39gY'
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
 INSTALLED_APPS = [
