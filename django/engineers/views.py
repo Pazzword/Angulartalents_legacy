@@ -1,14 +1,18 @@
+# Rest framework
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
+#Internal imports
 from .models import Engineer
 from .serializers import EngineerSerializer
 from users.models import User
 from django.utils.decorators import method_decorator
 from engineers.decorators import engineer_required
-from rest_framework.parsers import MultiPartParser, FormParser
+# Cloudinary
 from cloudinary.uploader import upload
+# JSON
 from django.http import JsonResponse
 import json
 
@@ -94,16 +98,16 @@ class EngineerListCreateView(APIView):
         # Add 'user' to data
         data['user'] = str(request.user.id)  # Associate the engineer profile with the authenticated user
 
-        # Log the processed data not for production
+        # Log the processed data --> NOT FOR PRODUCTION
         # print("Processed data:", data)
 
         # **Pass the request context to the serializer**
         serializer = EngineerSerializer(data=data, context={'request': request})
 
         if serializer.is_valid():
-            engineer = serializer.save()  # Save the profile
+            engineer = serializer.save()  
             return Response({
-                'engineerId': str(engineer.id),  # Return the engineer ID
+                'engineerId': str(engineer.id),  
                 'message': 'Engineer profile created successfully'
             }, status=status.HTTP_201_CREATED)
         else:
