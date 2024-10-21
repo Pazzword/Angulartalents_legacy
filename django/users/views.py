@@ -1,4 +1,7 @@
 from django.shortcuts import redirect
+from django.contrib.auth import authenticate
+from django.utils.decorators import method_decorator
+# Rest framework
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_mongoengine.generics import CreateAPIView, RetrieveAPIView
 from rest_framework import permissions, status
@@ -6,11 +9,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
+# Internal Imports
 from .models import User
-from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer, UserSerializer
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+# Logger
 import logging
 
 logger = logging.getLogger(__name__)
